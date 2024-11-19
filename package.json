@@ -1,0 +1,78 @@
+{
+  "name": "voyage-ai-provider",
+  "version": "0.0.1",
+  "description": "Voyage AI Provider for running Voyage AI models with Vercel AI SDK",
+  "author": "Vivek Patel <me@patelvivek.dev>",
+  "license": "Apache-2.0",
+  "keywords": [
+    "ai",
+    "vercel-ai",
+    "voyage",
+    "embeddings"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "check-exports": "attw --pack .",
+    "dev": "tsup --watch",
+    "lint": "eslint \"./**/*.ts*\"",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "test": "bun test:node && bun test:edge",
+    "test:edge": "vitest --config vitest.edge.config.js --run",
+    "test:node": "vitest --config vitest.node.config.js --run",
+    "ci": "bun run build && bun run check-format && bun run test",
+    "local-release": "changeset version && changeset publish",
+    "prepublishOnly": "npm run ci"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^1.0.0",
+    "@ai-sdk/provider-utils": "^2.0.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.9",
+    "@edge-runtime/vm": "^3.2.0",
+    "@types/node": "^18.19.64",
+    "prettier": "^3.3.3",
+    "tsup": "^8.3.5",
+    "typescript": "5.5.4",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^2.1.5",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "zod": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/patelvivekdev/voyage-ai-provider",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patelvivekdev/voyage-ai-provider.git"
+  },
+  "bugs": {
+    "url": "https://github.com/patelvivekdev/voyage-ai-provider/issues"
+  }
+}
