@@ -116,7 +116,7 @@ describe('doEmbed', () => {
     await voyage
       .textEmbeddingModel('voyage-3-code', {
         inputType: 'document',
-        encodingFormat: 'base64',
+        // encodingFormat: 'base64',
         outputDimension: 2048,
         outputDtype: 'int8',
       })
@@ -128,7 +128,7 @@ describe('doEmbed', () => {
       input: testValues,
       model: 'voyage-3-code',
       input_type: 'document',
-      encoding_format: 'base64',
+      // encoding_format: 'base64',
       output_dimension: 2048,
       output_dtype: 'int8',
     });

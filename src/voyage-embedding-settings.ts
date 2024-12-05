@@ -25,12 +25,12 @@ export interface VoyageEmbeddingSettings {
 
   inputType?: 'query' | 'document';
 
-  /**
-   * Format in which the embeddings are encoded. We support two options:
-   * If not specified (defaults to null): the embeddings are represented as lists of floating-point numbers;
-   * base64: the embeddings are compressed to base64 encodings.
-   */
-  encodingFormat?: 'base64';
+  // /**
+  //  * Format in which the embeddings are encoded. We support two options:
+  //  * If not specified (defaults to null): the embeddings are represented as lists of floating-point numbers;
+  //  * base64: the embeddings are compressed to base64 encodings.
+  //  */
+  // encodingFormat?: 'base64';
 
   /**
    * The number of dimensions for the resulting output embeddings.
