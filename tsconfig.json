@@ -1,29 +1,36 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "composite": false,
-    "declaration": true,
-    "declarationMap": true,
+    /* Base Options: */
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "inlineSources": false,
-    "isolatedModules": true,
-    "moduleResolution": "node",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "preserveWatchOutput": true,
     "skipLibCheck": true,
+    "target": "ES2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* Strictness */
     "strict": true,
-    "types": ["@types/node", "vitest/globals"],
-    "jsx": "react-jsx",
-    "lib": ["dom", "ES2021"],
-    "module": "ESNext",
-    "target": "ES2018",
-    "stripInternal": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+
+    /* Module Resolution */
+    "module": "Preserve",
+
+    /* Type Checking */
+    "noEmit": true,
+
+    /* Library */
+    "lib": ["ES2022"],
+
+    "types": ["@types/bun", "vitest/globals"],
+
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["."],
+  "include": ["src/**/*.ts", "src/**/*.test.ts"],
   "exclude": ["dist", "build", "node_modules"]
 }

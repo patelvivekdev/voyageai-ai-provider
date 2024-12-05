@@ -1,4 +1,4 @@
-import { EmbeddingModelV1Embedding } from '@ai-sdk/provider';
+import type { EmbeddingModelV1Embedding } from '@ai-sdk/provider';
 import { JsonTestServer } from '@ai-sdk/provider-utils/test';
 import { createVoyage } from './voyage-provider';
 
@@ -81,29 +81,6 @@ describe('doEmbed', () => {
     });
   });
 
-  it('should pass the settings ', async () => {
-    prepareJsonResponse();
-
-    const voyage = createVoyage({
-      baseURL: 'https://api.voyage.ai/v1',
-      apiKey: 'test-api-key',
-    });
-
-    await voyage
-      .textEmbeddingModel('voyage-3-lite', {
-        inputType: 'document',
-      })
-      .doEmbed({
-        values: testValues,
-      });
-
-    expect(await server.getRequestBodyJson()).toStrictEqual({
-      input: testValues,
-      model: 'voyage-3-lite',
-      input_type: 'document',
-    });
-  });
-
   it('should pass custom headers', async () => {
     prepareJsonResponse();
 
@@ -125,6 +102,35 @@ describe('doEmbed', () => {
       authorization: 'Bearer test-api-key',
       'content-type': 'application/json',
       'custom-header': 'test-header',
+    });
+  });
+
+  it('should pass the settings', async () => {
+    prepareJsonResponse();
+
+    const voyage = createVoyage({
+      baseURL: 'https://api.voyage.ai/v1',
+      apiKey: 'test-api-key',
+    });
+
+    await voyage
+      .textEmbeddingModel('voyage-3-code', {
+        inputType: 'document',
+        encodingFormat: 'base64',
+        outputDimension: 2048,
+        outputDtype: 'int8',
+      })
+      .doEmbed({
+        values: testValues,
+      });
+
+    expect(await server.getRequestBodyJson()).toStrictEqual({
+      input: testValues,
+      model: 'voyage-3-code',
+      input_type: 'document',
+      encoding_format: 'base64',
+      output_dimension: 2048,
+      output_dtype: 'int8',
     });
   });
 });

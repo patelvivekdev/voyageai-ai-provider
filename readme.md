@@ -59,7 +59,7 @@ export const generateEmbeddings = async (
 };
 ```
 
-### Add settings to the model
+### How to pass additional settings to the model
 
 The settings object should contain the settings you want to add to the model. You can find the available settings for the model in the Voyage API documentation: https://docs.voyageai.com/reference/embeddings-api
 
@@ -74,9 +74,23 @@ const embeddingModel = voyage.textEmbeddingModel(
   // adding settings
   {
     inputType: 'document',
+    outputDimension: '1024', // the new model voyage-code-3 has 4 different output dimensions: 256, 512, 1024 (default), 2048
+    outputDtype: 'float',
   },
 );
 ```
+
+## Voyage embedding models:
+
+| Model                 | Context Length (tokens) | Embedding Dimension            |
+| --------------------- | ----------------------- | ------------------------------ |
+| voyage-3              | 32,000                  | 1024                           |
+| voyage-3-lite         | 32,000                  | 512                            |
+| voyage-code-3         | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-finance-2      | 32,000                  | 1024                           |
+| voyage-multilingual-2 | 32,000                  | 1024                           |
+| voyage-law-2          | 16,000                  | 1024                           |
+| voyage-code-2         | 16,000                  | 1536                           |
 
 ## Authors
 

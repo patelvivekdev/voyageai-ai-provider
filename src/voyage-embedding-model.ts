@@ -1,5 +1,5 @@
 import {
-  EmbeddingModelV1,
+  type EmbeddingModelV1,
   TooManyEmbeddingValuesForCallError,
 } from '@ai-sdk/provider';
 import {
@@ -8,12 +8,11 @@ import {
 } from '@ai-sdk/provider-utils';
 import { z } from 'zod';
 
-import {
+import type {
   VoyageEmbeddingModelId,
   VoyageEmbeddingSettings,
 } from '@/voyage-embedding-settings';
 import { voyageFailedResponseHandler } from '@/voyage-error';
-import { encode } from 'punycode';
 
 type VoyageEmbeddingConfig = {
   baseURL: string;
@@ -72,8 +71,10 @@ export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
         input: values,
         model: this.modelId,
         input_type: this.settings.inputType,
-        encoding_format: this.settings.encodingFormat,
         truncation: this.settings.truncation,
+        output_dimension: this.settings.outputDimension,
+        output_dtype: this.settings.outputDtype,
+        encoding_format: this.settings.encodingFormat,
       },
       failedResponseHandler: voyageFailedResponseHandler,
       fetch: this.config.fetch,

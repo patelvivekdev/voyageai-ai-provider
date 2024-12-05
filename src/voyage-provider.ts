@@ -1,15 +1,15 @@
-import {
+import type {
   EmbeddingModelV1,
   LanguageModelV1,
   ProviderV1,
 } from '@ai-sdk/provider';
 import {
-  FetchFunction,
+  type FetchFunction,
   loadApiKey,
   withoutTrailingSlash,
 } from '@ai-sdk/provider-utils';
 import { VoyageEmbeddingModel } from './voyage-embedding-model';
-import {
+import type {
   VoyageEmbeddingModelId,
   VoyageEmbeddingSettings,
 } from './voyage-embedding-settings';
@@ -113,9 +113,7 @@ export function createVoyage(
   provider.textEmbedding = createEmbeddingModel;
   provider.textEmbeddingModel = createEmbeddingModel;
 
-  provider.chat = provider.languageModel = (
-    modelId: string,
-  ): LanguageModelV1 => {
+  provider.chat = provider.languageModel = (): LanguageModelV1 => {
     throw new Error('languageModel method is not implemented.');
   };
 
