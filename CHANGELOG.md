@@ -1,5 +1,11 @@
 # voyage-ai-provider
 
+## 1.0.0
+
+### Major Changes
+
+- 031f440: Remove encodingFormat settings.
+
 ## 0.0.2
 
 ### Patch Changes
