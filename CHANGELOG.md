@@ -1,5 +1,11 @@
 # voyage-ai-provider
 
+## 1.0.1
+
+### Patch Changes
+
+- Update version, add voyage-3-large docs.
+
 ## 1.0.0
 
 ### Major Changes

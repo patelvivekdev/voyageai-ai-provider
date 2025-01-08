@@ -1,4 +1,5 @@
 export type VoyageEmbeddingModelId =
+  | 'voyage-3-large'
   | 'voyage-3'
   | 'voyage-3-lite'
   | 'voyage-code-3'
@@ -37,6 +38,7 @@ export interface VoyageEmbeddingSettings {
    *
    * If not specified (defaults to null), the resulting output embeddings dimension is the default for the model.
    * `voyage-code-3` supports the following `outputDimension` values: 2048, 1024 (default), 512, and 256.
+   * `voyage-3-large` supports the following `outputDimension` values: 2048, 1024 (default), 512, and 256.
    *
    * please refer to the model documentation for the supported values.
    * https://docs.voyageai.com/docs/embeddings

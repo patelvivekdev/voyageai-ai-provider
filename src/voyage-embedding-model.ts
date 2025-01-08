@@ -74,7 +74,6 @@ export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
         truncation: this.settings.truncation,
         output_dimension: this.settings.outputDimension,
         output_dtype: this.settings.outputDtype,
-        encoding_format: this.settings.encodingFormat,
       },
       failedResponseHandler: voyageFailedResponseHandler,
       fetch: this.config.fetch,

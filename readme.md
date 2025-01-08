@@ -74,7 +74,7 @@ const embeddingModel = voyage.textEmbeddingModel(
   // adding settings
   {
     inputType: 'document',
-    outputDimension: '1024', // the new model voyage-code-3 has 4 different output dimensions: 256, 512, 1024 (default), 2048
+    outputDimension: '1024', // the new model voyage-code-3, voyage-3-large has 4 different output dimensions: 256, 512, 1024 (default), 2048
     outputDtype: 'float',
   },
 );
@@ -84,6 +84,7 @@ const embeddingModel = voyage.textEmbeddingModel(
 
 | Model                 | Context Length (tokens) | Embedding Dimension            |
 | --------------------- | ----------------------- | ------------------------------ |
+| voyage-3-large        | 32,000                  | 1024 (default), 256, 512, 2048 |
 | voyage-3              | 32,000                  | 1024                           |
 | voyage-3-lite         | 32,000                  | 512                            |
 | voyage-code-3         | 32,000                  | 1024 (default), 256, 512, 2048 |
