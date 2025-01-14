@@ -1,5 +1,12 @@
 # AI SDK - Voyage AI Provider
 
+<div align="center">
+<a href="https://www.npmjs.com/package/voyage-ai-provider"><img src="https://img.shields.io/npm/v/voyage-ai-provider"/><a>
+<a href="https://www.npmjs.com/package/voyage-ai-provider"><img src="https://img.shields.io/npm/dm/voyage-ai-provider"/><a>
+<a href="https://github.com/patelvivekdev/voyageai-ai-provider/actions/workflows/CI.yml"><img src="https://github.com/patelvivekdev/voyageai-ai-provider/actions/workflows/CI.yml/badge.svg"/><a>
+</div>
+<br>
+
 ## Introduction
 
 The Voyage AI Provider is a provider for the AI SDK. It provides a simple interface to the Voyage AI API.
