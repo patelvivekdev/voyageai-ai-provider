@@ -91,6 +91,8 @@ const embeddingModel = voyage.textEmbeddingModel(
 
 | Model                 | Context Length (tokens) | Embedding Dimension            |
 | --------------------- | ----------------------- | ------------------------------ |
+| voyage-3.5            | 32,000                  | 1024 (default), 256, 512 2048  |
+| voyage-3.5-lite       | 32,000                  | 1024 (default), 256, 512 2048  |
 | voyage-3-large        | 32,000                  | 1024 (default), 256, 512, 2048 |
 | voyage-3              | 32,000                  | 1024                           |
 | voyage-3-lite         | 32,000                  | 512                            |

@@ -1,6 +1,6 @@
 {
   "name": "voyage-ai-provider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Voyage AI Provider for running Voyage AI models with Vercel AI SDK",
   "author": "Vivek Patel <me@patelvivek.dev>",
   "license": "MIT",

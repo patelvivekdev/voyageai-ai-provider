@@ -1,5 +1,11 @@
 # voyage-ai-provider
 
+## 1.0.2
+
+### Patch Changes
+
+- Add new model ids
+
 ## 1.0.1
 
 ### Patch Changes

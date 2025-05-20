@@ -1,4 +1,6 @@
 export type VoyageEmbeddingModelId =
+  | 'voyage-3.5'
+  | 'voyage-3.5-lite'
   | 'voyage-3-large'
   | 'voyage-3'
   | 'voyage-3-lite'
