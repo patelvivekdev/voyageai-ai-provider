@@ -4,6 +4,7 @@
 <a href="https://www.npmjs.com/package/voyage-ai-provider"><img src="https://img.shields.io/npm/v/voyage-ai-provider"/><a>
 <a href="https://www.npmjs.com/package/voyage-ai-provider"><img src="https://img.shields.io/npm/dm/voyage-ai-provider"/><a>
 <a href="https://github.com/patelvivekdev/voyageai-ai-provider/actions/workflows/CI.yml"><img src="https://github.com/patelvivekdev/voyageai-ai-provider/actions/workflows/CI.yml/badge.svg"/><a>
+<a href="https://deepwiki.com/patelvivekdev/voyageai-ai-provider"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </div>
 <br>
 
