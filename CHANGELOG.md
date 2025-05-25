@@ -1,5 +1,18 @@
 # voyage-ai-provider
 
+## 1.1.0
+
+### Minor Changes
+
+- Add multimodal and image embedding support
+
+  - Added `imageEmbeddingModel()` for image-only embeddings
+  - Added `multimodalEmbeddingModel()` for combined text and image embeddings
+  - Enhanced type system with `ImageEmbeddingInput`, `MultimodalEmbeddingInput`, and `TextEmbeddingInput`
+  - Updated dependencies:
+    - @ai-sdk/provider to 1.1.3
+    - @ai-sdk/provider-utils to 2.2.8
+
 ## 1.0.2
 
 ### Patch Changes

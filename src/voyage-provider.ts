@@ -13,6 +13,13 @@ import type {
   VoyageEmbeddingModelId,
   VoyageEmbeddingSettings,
 } from './voyage-embedding-settings';
+import type { VoyageMultimodalEmbeddingModelId } from './voyage-multimodal-embedding-settings';
+import type { VoyageMultimodalEmbeddingSettings } from './voyage-multimodal-embedding-settings';
+import {
+  MultimodalEmbeddingModel,
+  type ImageEmbeddingInput,
+  type MultimodalEmbeddingInput,
+} from './voyage-multimodal-embedding-model';
 
 export interface VoyageProvider extends ProviderV1 {
   (
@@ -40,13 +47,25 @@ export interface VoyageProvider extends ProviderV1 {
     modelId: VoyageEmbeddingModelId,
     settings?: VoyageEmbeddingSettings,
   ) => EmbeddingModelV1<string>;
+
+  imageEmbeddingModel: (
+    modelId: VoyageMultimodalEmbeddingModelId,
+    settings?: VoyageMultimodalEmbeddingSettings,
+  ) => EmbeddingModelV1<ImageEmbeddingInput>;
+
+  multimodalEmbeddingModel: (
+    modelId: VoyageMultimodalEmbeddingModelId,
+    settings?: VoyageMultimodalEmbeddingSettings,
+  ) => EmbeddingModelV1<MultimodalEmbeddingInput>;
 }
 
 export interface VoyageProviderSettings {
   /**
-  Use a different URL prefix for API calls, e.g. to use proxy servers.
-  The default prefix is `https://api.voyageai.com/v1`.
-     */
+   * Use a different URL prefix for API calls, e.g. to use proxy servers.
+   * The default prefix is `https://api.voyageai.com/v1`.
+   *
+   * @see https://docs.voyageai.com/reference
+   */
   baseURL?: string;
 
   /**
@@ -96,6 +115,38 @@ export function createVoyage(
       fetch: options.fetch,
     });
 
+  const createImageEmbeddingModel = (
+    modelId: VoyageMultimodalEmbeddingModelId,
+    settings: VoyageMultimodalEmbeddingSettings = {},
+  ) =>
+    new MultimodalEmbeddingModel(
+      modelId,
+      settings,
+      {
+        provider: 'voyage.image.embedding',
+        baseURL,
+        headers: getHeaders,
+        fetch: options.fetch,
+      },
+      'image',
+    );
+
+  const createMultimodalEmbeddingModel = (
+    modelId: VoyageMultimodalEmbeddingModelId,
+    settings: VoyageMultimodalEmbeddingSettings = {},
+  ) =>
+    new MultimodalEmbeddingModel(
+      modelId,
+      settings,
+      {
+        provider: 'voyage.multimodal.embedding',
+        baseURL,
+        headers: getHeaders,
+        fetch: options.fetch,
+      },
+      'multimodal',
+    );
+
   const provider = function (
     modelId: VoyageEmbeddingModelId,
     settings?: VoyageEmbeddingSettings,
@@ -112,6 +163,8 @@ export function createVoyage(
   provider.embedding = createEmbeddingModel;
   provider.textEmbedding = createEmbeddingModel;
   provider.textEmbeddingModel = createEmbeddingModel;
+  provider.imageEmbeddingModel = createImageEmbeddingModel;
+  provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
 
   provider.chat = provider.languageModel = (): LanguageModelV1 => {
     throw new Error('languageModel method is not implemented.');

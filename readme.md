@@ -32,7 +32,7 @@ bun add voyage-ai-provider
 
 ## Configuration
 
-The Voyage AI Provider requires an API key to be configured. You can obtain an API key by signing up at [Voyage](https://voyageai.com).
+The Voyage AI Provider requires an API key to be configured. You can obtain an API key by signing up at [Voyage AI](https://www.voyageai.com).
 
 add the following to your `.env` file:
 
@@ -41,6 +41,8 @@ VOYAGE_API_KEY=your-api-key
 ```
 
 ## Usage
+
+### Text Embedding
 
 ```typescript
 import { voyage } from 'voyage-ai-provider';
@@ -88,6 +90,119 @@ const embeddingModel = voyage.textEmbeddingModel(
 );
 ```
 
+### Image Embedding
+
+#### Example 1: Embed a single image as single embedding
+
+```typescript
+import { voyage, ImageEmbeddingInput } from 'voyage-ai-provider';
+import { embedMany } from 'ai';
+
+const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
+
+const { embeddings } = await embedMany<ImageEmbeddingInput>({
+  model: imageModel,
+  values: [
+    {
+      image:
+        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+    },
+    {
+      image: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+    },
+  ],
+  // or you can pass the array of images url and base64 string directly
+  // values: [
+  //   'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+  //   'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+  // ],
+});
+```
+
+#### Example 2: Embed multiple images as single embedding
+
+```typescript
+import { voyage, ImageEmbeddingInput } from 'voyage-ai-provider';
+import { embedMany } from 'ai';
+
+const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
+
+const { embeddings } = await embedMany<ImageEmbeddingInput>({
+  model: imageModel,
+  values: [
+    {
+      image: [
+        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+      ],
+    },
+  ],
+});
+```
+
+#### Example 3: Embed multiple images as multiple embeddings
+
+```typescript
+import { voyage, ImageEmbeddingInput } from 'voyage-ai-provider';
+import { embedMany } from 'ai';
+
+const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
+
+const { embeddings } = await embedMany<ImageEmbeddingInput>({
+  model: imageModel,
+  values: [
+    {
+      image:
+        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+    },
+    {
+      image: [
+        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+      ],
+    },
+  ],
+});
+```
+
+> !note
+> If you are getting error for image url not found, you can convert image to base64 and pass the base64 string to the image array.
+> The value should be a Base64-encoded image in the data URL format data:[<mediatype>];base64,<data>.
+> Currently supported mediatypes are: image/png, image/jpeg, image/webp, and image/gif.
+
+### Multi-modal Embedding
+
+#### Example 1: Embed multiple texts and images as single embedding
+
+```typescript
+import { voyage, MultimodalEmbeddingInput } from 'voyage-ai-provider';
+import { embedMany } from 'ai';
+
+const multimodalModel = voyage.multimodalEmbeddingModel('voyage-multimodal-3');
+
+const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
+  model: multimodalModel,
+  values: [
+    {
+      text: ['Hello, world!', 'This is a banana'],
+      image: [
+        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+      ],
+    },
+    {
+      text: ['Hello, coders!', 'This is a coding test'],
+      image: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...'],
+    },
+  ],
+});
+```
+
+> !note
+> The following constraints apply to the values list:
+> The list must not contain more than 1,000 values.
+> Each image must not contain more than 16 million pixels or be larger than 20 MB in size.
+> With every 560 pixels of an image being counted as a token, each input in the list must not exceed 32,000 tokens, and the total number of tokens across all inputs must not exceed 320,000.
+
 ## Voyage embedding models:
 
 | Model                 | Context Length (tokens) | Embedding Dimension            |
@@ -102,6 +217,17 @@ const embeddingModel = voyage.textEmbeddingModel(
 | voyage-multilingual-2 | 32,000                  | 1024                           |
 | voyage-law-2          | 16,000                  | 1024                           |
 | voyage-code-2         | 16,000                  | 1536                           |
+
+> !note
+> The older models are deprecated and will be removed in the future.
+> Use the latest models instead.
+> https://docs.voyageai.com/docs/embeddings
+
+## Multi-modal Embedding
+
+| Model               | Context Length (tokens) | Embedding Dimension |
+| ------------------- | ----------------------- | ------------------- |
+| voyage-multimodal-3 | 32,000                  | 1024                |
 
 ## Authors
 

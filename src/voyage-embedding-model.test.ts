@@ -1,5 +1,5 @@
 import type { EmbeddingModelV1Embedding } from '@ai-sdk/provider';
-import { JsonTestServer } from '@ai-sdk/provider-utils/test';
+import { createTestServer } from '@ai-sdk/provider-utils/test';
 import { createVoyage } from './voyage-provider';
 
 const dummyEmbeddings = [
@@ -13,33 +13,38 @@ const provider = createVoyage({
   apiKey: 'test-api-key',
 });
 const model = provider('voyage-3-lite');
+const server = createTestServer({
+  'https://api.voyage.ai/v1/embeddings': {},
+});
 
 describe('doEmbed', () => {
-  const server = new JsonTestServer('https://api.voyage.ai/v1/embeddings');
-
-  server.setupTestEnvironment();
-
   function prepareJsonResponse({
     embeddings = dummyEmbeddings,
     usage = {
       prompt_tokens: 4,
       total_tokens: 12,
     },
+    headers,
   }: {
     embeddings?: EmbeddingModelV1Embedding[];
     usage?: { prompt_tokens: number; total_tokens: number };
+    headers?: Record<string, string>;
   } = {}) {
-    server.responseBodyJson = {
-      object: 'list',
-      data: embeddings.map((embedding, i) => ({
-        object: 'embedding',
-        embedding,
-        index: i,
-      })),
-      model: 'voyage-3-lite',
-      normalized: true,
-      encoding_format: 'float',
-      usage,
+    server.urls['https://api.voyage.ai/v1/embeddings'].response = {
+      type: 'json-value',
+      headers,
+      body: {
+        object: 'list',
+        data: embeddings.map((embedding, i) => ({
+          object: 'embedding',
+          embedding,
+          index: i,
+        })),
+        model: 'voyage-3-lite',
+        normalized: true,
+        encoding_format: 'float',
+        usage,
+      },
     };
   }
 
@@ -52,11 +57,9 @@ describe('doEmbed', () => {
   });
 
   it('should expose the raw response headers', async () => {
-    prepareJsonResponse();
-
-    server.responseHeaders = {
-      'test-header': 'test-value',
-    };
+    prepareJsonResponse({
+      headers: { 'test-header': 'test-value' },
+    });
 
     const { rawResponse } = await model.doEmbed({ values: testValues });
 
@@ -75,7 +78,7 @@ describe('doEmbed', () => {
 
     await model.doEmbed({ values: testValues });
 
-    expect(await server.getRequestBodyJson()).toStrictEqual({
+    expect(await server.calls[0]?.requestBody).toStrictEqual({
       input: testValues,
       model: 'voyage-3-lite',
     });
@@ -88,20 +91,24 @@ describe('doEmbed', () => {
       baseURL: 'https://api.voyage.ai/v1',
       apiKey: 'test-api-key',
       headers: {
-        'Custom-Header': 'test-header',
+        'Custom-Provider-Header': 'provider-header-value',
       },
     });
 
     await voyage.textEmbeddingModel('voyage-3-lite').doEmbed({
       values: testValues,
+      headers: {
+        'Custom-Request-Header': 'request-header-value',
+      },
     });
 
-    const requestHeaders = await server.getRequestHeaders();
+    const requestHeaders = server.calls[0]?.requestHeaders;
 
     expect(requestHeaders).toStrictEqual({
       authorization: 'Bearer test-api-key',
       'content-type': 'application/json',
-      'custom-header': 'test-header',
+      'custom-provider-header': 'provider-header-value',
+      'custom-request-header': 'request-header-value',
     });
   });
 
@@ -124,7 +131,9 @@ describe('doEmbed', () => {
         values: testValues,
       });
 
-    expect(await server.getRequestBodyJson()).toStrictEqual({
+    const requestBody = await server.calls[0]?.requestBody;
+
+    expect(requestBody).toStrictEqual({
       input: testValues,
       model: 'voyage-3-code',
       input_type: 'document',
