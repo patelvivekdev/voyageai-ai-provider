@@ -1,5 +1,13 @@
 # voyage-ai-provider
 
+## 2.0.0-alpha.0
+
+### Major Changes
+
+- 2.0.0-alpha.0
+- Upgrade to @ai-sdk/provider v2
+- upgrade to ai V5
+
 ## 1.1.0
 
 ### Minor Changes

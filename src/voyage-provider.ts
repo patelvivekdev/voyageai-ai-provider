@@ -1,7 +1,8 @@
 import type {
-  EmbeddingModelV1,
-  LanguageModelV1,
-  ProviderV1,
+  EmbeddingModelV2,
+  ImageModelV2,
+  LanguageModelV2,
+  ProviderV2,
 } from '@ai-sdk/provider';
 import {
   type FetchFunction,
@@ -9,54 +10,28 @@ import {
   withoutTrailingSlash,
 } from '@ai-sdk/provider-utils';
 import { VoyageEmbeddingModel } from './voyage-embedding-model';
-import type {
-  VoyageEmbeddingModelId,
-  VoyageEmbeddingSettings,
-} from './voyage-embedding-settings';
+import type { VoyageEmbeddingModelId } from './voyage-embedding-settings';
 import type { VoyageMultimodalEmbeddingModelId } from './voyage-multimodal-embedding-settings';
-import type { VoyageMultimodalEmbeddingSettings } from './voyage-multimodal-embedding-settings';
 import {
   MultimodalEmbeddingModel,
   type ImageEmbeddingInput,
   type MultimodalEmbeddingInput,
 } from './voyage-multimodal-embedding-model';
 
-export interface VoyageProvider extends ProviderV1 {
-  (
-    modelId: VoyageEmbeddingModelId,
-    settings?: VoyageEmbeddingSettings,
-  ): EmbeddingModelV1<string>;
-
-  /**
-  @deprecated Use `textEmbeddingModel()` instead.
-     */
-  embedding(
-    modelId: VoyageEmbeddingModelId,
-    settings?: VoyageEmbeddingSettings,
-  ): EmbeddingModelV1<string>;
-
-  /**
-  @deprecated Use `textEmbeddingModel()` instead.
-     */
-  textEmbedding(
-    modelId: VoyageEmbeddingModelId,
-    settings?: VoyageEmbeddingSettings,
-  ): EmbeddingModelV1<string>;
+export interface VoyageProvider extends ProviderV2 {
+  (modelId: VoyageEmbeddingModelId): EmbeddingModelV2<string>;
 
   textEmbeddingModel: (
     modelId: VoyageEmbeddingModelId,
-    settings?: VoyageEmbeddingSettings,
-  ) => EmbeddingModelV1<string>;
+  ) => EmbeddingModelV2<string>;
 
   imageEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-    settings?: VoyageMultimodalEmbeddingSettings,
-  ) => EmbeddingModelV1<ImageEmbeddingInput>;
+  ) => EmbeddingModelV2<ImageEmbeddingInput>;
 
   multimodalEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-    settings?: VoyageMultimodalEmbeddingSettings,
-  ) => EmbeddingModelV1<MultimodalEmbeddingInput>;
+  ) => EmbeddingModelV2<MultimodalEmbeddingInput>;
 }
 
 export interface VoyageProviderSettings {
@@ -104,11 +79,8 @@ export function createVoyage(
     ...options.headers,
   });
 
-  const createEmbeddingModel = (
-    modelId: VoyageEmbeddingModelId,
-    settings: VoyageEmbeddingSettings = {},
-  ) =>
-    new VoyageEmbeddingModel(modelId, settings, {
+  const createEmbeddingModel = (modelId: VoyageEmbeddingModelId) =>
+    new VoyageEmbeddingModel(modelId, {
       provider: 'voyage.embedding',
       baseURL,
       headers: getHeaders,
@@ -117,11 +89,9 @@ export function createVoyage(
 
   const createImageEmbeddingModel = (
     modelId: VoyageMultimodalEmbeddingModelId,
-    settings: VoyageMultimodalEmbeddingSettings = {},
   ) =>
     new MultimodalEmbeddingModel(
       modelId,
-      settings,
       {
         provider: 'voyage.image.embedding',
         baseURL,
@@ -133,11 +103,9 @@ export function createVoyage(
 
   const createMultimodalEmbeddingModel = (
     modelId: VoyageMultimodalEmbeddingModelId,
-    settings: VoyageMultimodalEmbeddingSettings = {},
   ) =>
     new MultimodalEmbeddingModel(
       modelId,
-      settings,
       {
         provider: 'voyage.multimodal.embedding',
         baseURL,
@@ -147,27 +115,25 @@ export function createVoyage(
       'multimodal',
     );
 
-  const provider = function (
-    modelId: VoyageEmbeddingModelId,
-    settings?: VoyageEmbeddingSettings,
-  ) {
+  const provider = function (modelId: VoyageEmbeddingModelId) {
     if (new.target) {
       throw new Error(
         'The Voyage model function cannot be called with the new keyword.',
       );
     }
 
-    return createEmbeddingModel(modelId, settings);
+    return createEmbeddingModel(modelId);
   };
 
-  provider.embedding = createEmbeddingModel;
-  provider.textEmbedding = createEmbeddingModel;
   provider.textEmbeddingModel = createEmbeddingModel;
   provider.imageEmbeddingModel = createImageEmbeddingModel;
   provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
 
-  provider.chat = provider.languageModel = (): LanguageModelV1 => {
+  provider.chat = provider.languageModel = (): LanguageModelV2 => {
     throw new Error('languageModel method is not implemented.');
+  };
+  provider.imageModel = (): ImageModelV2 => {
+    throw new Error('imageModel method is not implemented.');
   };
 
   return provider as VoyageProvider;

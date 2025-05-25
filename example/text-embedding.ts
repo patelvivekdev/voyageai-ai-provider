@@ -1,4 +1,6 @@
 import type { TextEmbeddingInput } from '../src';
+import type { VoyageEmbeddingOptions } from '../src/voyage-embedding-settings';
+import type { VoyageMultimodalEmbeddingOptions } from '../src/voyage-multimodal-embedding-settings';
 import { createVoyage } from '../src/voyage-provider';
 import { embed, embedMany } from 'ai';
 
@@ -16,6 +18,11 @@ async function textEmbeddingExamples() {
   const embedding = await embed<TextEmbeddingInput>({
     model: textModel,
     value: 'The quick brown fox jumps over the lazy dog',
+    providerOptions: {
+      voyage: {
+        inputType: 'query',
+      } satisfies VoyageEmbeddingOptions,
+    },
   });
   console.log(embedding);
 
@@ -49,6 +56,11 @@ async function textEmbeddingExamples() {
       'Technical support request for software installation',
       'Sales question about pricing and availability',
     ],
+    providerOptions: {
+      voyage: {
+        inputType: 'query',
+      } satisfies VoyageMultimodalEmbeddingOptions,
+    },
   });
   for (const [index, embedding] of singleTexts.embeddings.entries()) {
     console.log(`Index: ${index}`);

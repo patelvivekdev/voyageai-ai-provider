@@ -1,4 +1,4 @@
-import type { EmbeddingModelV1Embedding } from '@ai-sdk/provider';
+import type { EmbeddingModelV2Embedding } from '@ai-sdk/provider';
 import { createTestServer } from '@ai-sdk/provider-utils/test';
 import { createVoyage } from './voyage-provider';
 
@@ -26,7 +26,7 @@ describe('doEmbed', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV1Embedding[];
+    embeddings?: EmbeddingModelV2Embedding[];
     usage?: { prompt_tokens: number; total_tokens: number };
     headers?: Record<string, string>;
   } = {}) {
@@ -61,9 +61,9 @@ describe('doEmbed', () => {
       headers: { 'test-header': 'test-value' },
     });
 
-    const { rawResponse } = await model.doEmbed({ values: testValues });
+    const { response } = await model.doEmbed({ values: testValues });
 
-    expect(rawResponse?.headers).toStrictEqual({
+    expect(response?.headers).toStrictEqual({
       'content-length': '272',
       // default headers:
       'content-type': 'application/json',
@@ -78,7 +78,7 @@ describe('doEmbed', () => {
 
     await model.doEmbed({ values: testValues });
 
-    expect(await server.calls[0]?.requestBody).toStrictEqual({
+    expect(await server.calls[0]?.requestBodyJson).toStrictEqual({
       input: testValues,
       model: 'voyage-3-lite',
     });
@@ -120,18 +120,18 @@ describe('doEmbed', () => {
       apiKey: 'test-api-key',
     });
 
-    await voyage
-      .textEmbeddingModel('voyage-3-code', {
-        inputType: 'document',
-        // encodingFormat: 'base64',
-        outputDimension: 2048,
-        outputDtype: 'int8',
-      })
-      .doEmbed({
-        values: testValues,
-      });
+    await voyage.textEmbeddingModel('voyage-3-code').doEmbed({
+      values: testValues,
+      providerOptions: {
+        voyage: {
+          inputType: 'document',
+          outputDimension: 2048,
+          outputDtype: 'int8',
+        },
+      },
+    });
 
-    const requestBody = await server.calls[0]?.requestBody;
+    const requestBody = await server.calls[0]?.requestBodyJson;
 
     expect(requestBody).toStrictEqual({
       input: testValues,
