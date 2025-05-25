@@ -165,8 +165,8 @@ const { embeddings } = await embedMany<ImageEmbeddingInput>({
 });
 ```
 
-> !note
-> If you are getting error for image url not found, you can convert image to base64 and pass the base64 string to the image array.
+> [!TIP]
+> If you are getting error for image url not found, convert image to base64 and pass the base64 string to the image array.
 > The value should be a Base64-encoded image in the data URL format data:[<mediatype>];base64,<data>.
 > Currently supported mediatypes are: image/png, image/jpeg, image/webp, and image/gif.
 
@@ -197,7 +197,7 @@ const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
 });
 ```
 
-> !note
+> [!NOTE]
 > The following constraints apply to the values list:
 > The list must not contain more than 1,000 values.
 > Each image must not contain more than 16 million pixels or be larger than 20 MB in size.
@@ -218,7 +218,7 @@ const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
 | voyage-law-2          | 16,000                  | 1024                           |
 | voyage-code-2         | 16,000                  | 1536                           |
 
-> !note
+> [!WARNING]
 > The older models are deprecated and will be removed in the future.
 > Use the latest models instead.
 > https://docs.voyageai.com/docs/embeddings
