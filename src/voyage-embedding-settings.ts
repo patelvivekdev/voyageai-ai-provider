@@ -10,7 +10,7 @@ export type VoyageEmbeddingModelId =
   | 'voyage-law-2'
   | 'voyage-code-2'
 
-  // Older models
+  // Older models [Deprecated]
   | 'voyage-large-2-instruct'
   | 'voyage-large-2'
   | 'voyage-2'
