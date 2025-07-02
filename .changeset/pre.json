@@ -1,8 +1,0 @@
-{
-  "mode": "pre",
-  "tag": "alpha",
-  "initialVersions": {
-    "voyage-ai-provider": "1.1.0"
-  },
-  "changesets": ["bright-news-help"]
-}

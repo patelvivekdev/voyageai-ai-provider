@@ -1,5 +1,24 @@
 # voyage-ai-provider
 
+## 2.0.0-beta.3
+
+### Patch Changes
+
+- fix the export
+
+## 2.0.0-beta.2
+
+### Patch Changes
+
+- export `voyageEmbeddingOptions` and `voyageMultimodalEmbeddingOptions`
+
+## 2.0.0-beta.1
+
+### Patch Changes
+
+- update to @ai-sdk/provider and @ai-sdk/provider-utils beta
+- change to zod v4 internally
+
 ## 2.0.0-alpha.0
 
 ### Major Changes
@@ -13,7 +32,6 @@
 ### Minor Changes
 
 - Add multimodal and image embedding support
-
   - Added `imageEmbeddingModel()` for image-only embeddings
   - Added `multimodalEmbeddingModel()` for combined text and image embeddings
   - Enhanced type system with `ImageEmbeddingInput`, `MultimodalEmbeddingInput`, and `TextEmbeddingInput`

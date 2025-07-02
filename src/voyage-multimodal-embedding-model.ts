@@ -15,7 +15,7 @@ import {
   type VoyageMultimodalEmbeddingModelId,
 } from '@/voyage-multimodal-embedding-settings';
 import { voyageFailedResponseHandler } from '@/voyage-error';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 type VoyageEmbeddingConfig = {
   baseURL: string;
