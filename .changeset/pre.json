@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "voyage-ai-provider": "1.1.0"
+  },
+  "changesets": [
+    "major-upgrade-ai-sdk-v2",
+    "minor-export-options",
+    "export-fix"
+  ]
+}
