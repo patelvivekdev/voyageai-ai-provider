@@ -1,5 +1,11 @@
 # voyage-ai-provider
 
+## 2.0.0-beta.4
+
+### Patch Changes
+
+- fix beta versioning
+
 ## 2.0.0-beta.3
 
 ### Patch Changes

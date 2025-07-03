@@ -5,8 +5,9 @@
     "voyage-ai-provider": "1.1.0"
   },
   "changesets": [
-    "major-upgrade-ai-sdk-v2",
+    "curvy-plants-clean",
+    "export-fix",
     "minor-export-options",
-    "export-fix"
+    "major-upgrade-ai-sdk-v2"
   ]
 }
