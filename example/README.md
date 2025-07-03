@@ -388,19 +388,16 @@ await multimodalModel.doEmbed({
 ## 📊 Performance Tips
 
 1. **Choose the Right Model**:
-
    - Text model for text-only use cases
    - Image model for image-only use cases
    - Multimodal model for mixed or future-proof scenarios
 
 2. **Batch Processing**:
-
    - Process multiple items in single calls
    - Respect rate limits and batch size limits
    - Monitor performance and adjust accordingly
 
 3. **Content Optimization**:
-
    - Keep text descriptions focused and relevant
    - Use high-quality, representative images
    - Group related content together
