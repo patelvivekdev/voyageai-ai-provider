@@ -1,8 +1,10 @@
+import { z } from 'zod/v4';
+
 export type VoyageMultimodalEmbeddingModelId =
   | 'voyage-multimodal-3'
   | (string & {});
 
-export interface VoyageMultimodalEmbeddingSettings {
+export const voyageMultimodalEmbeddingOptions = z.object({
   /**
    * Type of the input.
    * Defaults to "query".
@@ -19,7 +21,7 @@ export interface VoyageMultimodalEmbeddingSettings {
    * - For "document": "Represent the document for retrieval: "
    */
 
-  inputType?: 'query' | 'document';
+  inputType: z.enum(['query', 'document']).optional(),
 
   /**
    * The data type for the resulting output embeddings.
@@ -31,12 +33,16 @@ export interface VoyageMultimodalEmbeddingSettings {
    *
    * https://docs.voyageai.com/docs/faq#what-is-quantization-and-output-data-types
    */
-  outputEncoding?: 'base64';
+  outputEncoding: z.enum(['base64']).optional(),
 
   /**
    *  Whether to truncate the input texts to fit within the context length.
    *
    *  Defaults to true.
    */
-  truncation?: boolean;
-}
+  truncation: z.boolean().optional(),
+});
+
+export type VoyageMultimodalEmbeddingOptions = z.infer<
+  typeof voyageMultimodalEmbeddingOptions
+>;

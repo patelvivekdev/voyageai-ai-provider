@@ -1,4 +1,4 @@
-import type { EmbeddingModelV1Embedding } from '@ai-sdk/provider';
+import type { EmbeddingModelV2Embedding } from '@ai-sdk/provider';
 import { createTestServer } from '@ai-sdk/provider-utils/test';
 import { createVoyage } from './voyage-provider';
 import type {
@@ -35,7 +35,7 @@ describe('Multimodal Embedding Model', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV1Embedding[];
+    embeddings?: EmbeddingModelV2Embedding[];
     usage?: {
       text_tokens?: number;
       image_pixels?: number;
@@ -65,7 +65,7 @@ describe('Multimodal Embedding Model', () => {
       const testValues = ['sunny day at the beach', 'rainy day in the city'];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -97,7 +97,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -127,7 +127,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -161,7 +161,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -193,7 +193,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -228,7 +228,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -262,7 +262,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -296,7 +296,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -334,7 +334,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -384,7 +384,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -420,7 +420,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -492,7 +492,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -542,7 +542,7 @@ describe('Multimodal Embedding Model', () => {
       ];
       await multimodalEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -586,11 +586,11 @@ describe('Multimodal Embedding Model', () => {
       });
 
       const testValues: string[] = ['test text'];
-      const { rawResponse } = await multimodalEmbeddingModel.doEmbed({
+      const { response } = await multimodalEmbeddingModel.doEmbed({
         values: testValues,
       });
 
-      expect(rawResponse?.headers).toStrictEqual({
+      expect(response?.headers).toStrictEqual({
         'content-length': '239',
         'content-type': 'application/json',
         'test-header': 'test-value',
@@ -605,16 +605,21 @@ describe('Multimodal Embedding Model', () => {
         apiKey: 'test-api-key',
       });
 
-      const model = voyage.multimodalEmbeddingModel('voyage-multimodal-3', {
-        inputType: 'document',
-        truncation: false,
-        outputEncoding: 'base64',
-      });
+      const model = voyage.multimodalEmbeddingModel('voyage-multimodal-3');
 
       const testValues: string[] = ['test text'];
-      await model.doEmbed({ values: testValues });
+      await model.doEmbed({
+        values: testValues,
+        providerOptions: {
+          voyage: {
+            inputType: 'document',
+            truncation: false,
+            outputEncoding: 'base64',
+          },
+        },
+      });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody).toMatchObject({
         model: 'voyage-multimodal-3',
         input_type: 'document',
@@ -679,7 +684,7 @@ describe('Image Embedding Model', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV1Embedding[];
+    embeddings?: EmbeddingModelV2Embedding[];
     usage?: {
       text_tokens?: number;
       image_pixels?: number;
@@ -712,7 +717,7 @@ describe('Image Embedding Model', () => {
       ];
       await imageEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -742,7 +747,7 @@ describe('Image Embedding Model', () => {
       ];
       await imageEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -772,7 +777,7 @@ describe('Image Embedding Model', () => {
       ];
       await imageEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -807,7 +812,7 @@ describe('Image Embedding Model', () => {
       ];
       await imageEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [
@@ -848,7 +853,7 @@ describe('Image Embedding Model', () => {
       ];
       await imageEmbeddingModel.doEmbed({ values: testValues });
 
-      const requestBody = await server.calls[0]?.requestBody;
+      const requestBody = await server.calls[0]?.requestBodyJson;
       expect(requestBody.inputs).toStrictEqual([
         {
           content: [

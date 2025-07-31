@@ -1,20 +1,21 @@
 import {
-  type EmbeddingModelV1,
+  type EmbeddingModelV2,
   TooManyEmbeddingValuesForCallError,
 } from '@ai-sdk/provider';
 import {
   combineHeaders,
   createJsonResponseHandler,
   type FetchFunction,
+  parseProviderOptions,
   postJsonToApi,
 } from '@ai-sdk/provider-utils';
-import { z } from 'zod';
 
-import type {
-  VoyageMultimodalEmbeddingModelId,
-  VoyageMultimodalEmbeddingSettings,
+import {
+  voyageMultimodalEmbeddingOptions,
+  type VoyageMultimodalEmbeddingModelId,
 } from '@/voyage-multimodal-embedding-settings';
 import { voyageFailedResponseHandler } from '@/voyage-error';
+import { z } from 'zod/v4';
 
 type VoyageEmbeddingConfig = {
   baseURL: string;
@@ -85,13 +86,12 @@ export type VoyageMultimodalInput = {
   content: VoyageMultimodalContentItem[];
 };
 
-export class MultimodalEmbeddingModel<T> implements EmbeddingModelV1<T> {
-  readonly specificationVersion = 'v1';
+export class MultimodalEmbeddingModel<T> implements EmbeddingModelV2<T> {
+  readonly specificationVersion = 'v2';
   readonly modelId: VoyageMultimodalEmbeddingModelId;
   readonly modelType: 'multimodal' | 'image';
 
   private readonly config: VoyageEmbeddingConfig;
-  private readonly settings: VoyageMultimodalEmbeddingSettings;
 
   get provider(): string {
     return this.config.provider;
@@ -107,12 +107,10 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV1<T> {
 
   constructor(
     modelId: VoyageMultimodalEmbeddingModelId,
-    settings: VoyageMultimodalEmbeddingSettings,
     config: VoyageEmbeddingConfig,
     modelType: 'multimodal' | 'image',
   ) {
     this.modelId = modelId;
-    this.settings = settings;
     this.config = config;
     this.modelType = modelType;
   }
@@ -312,9 +310,15 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV1<T> {
     abortSignal,
     values,
     headers,
-  }: Parameters<EmbeddingModelV1<T>['doEmbed']>[0]): Promise<
-    Awaited<ReturnType<EmbeddingModelV1<T>['doEmbed']>>
+    providerOptions,
+  }: Parameters<EmbeddingModelV2<T>['doEmbed']>[0]): Promise<
+    Awaited<ReturnType<EmbeddingModelV2<T>['doEmbed']>>
   > {
+    const embeddingOptions = await parseProviderOptions({
+      provider: 'voyage',
+      providerOptions,
+      schema: voyageMultimodalEmbeddingOptions,
+    });
     if (values.length > this.maxEmbeddingsPerCall) {
       throw new TooManyEmbeddingValuesForCallError({
         maxEmbeddingsPerCall: this.maxEmbeddingsPerCall,
@@ -327,14 +331,18 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV1<T> {
     // https://docs.voyageai.com/reference/multimodal-embeddings-api
     const transformedInputs = this.transformInputs(values);
 
-    const { responseHeaders, value: response } = await postJsonToApi({
+    const {
+      responseHeaders,
+      value: response,
+      rawValue,
+    } = await postJsonToApi({
       abortSignal,
       body: {
         inputs: transformedInputs,
         model: this.modelId,
-        input_type: this.settings.inputType,
-        truncation: this.settings.truncation,
-        output_encoding: this.settings.outputEncoding,
+        input_type: embeddingOptions?.inputType,
+        truncation: embeddingOptions?.truncation,
+        output_encoding: embeddingOptions?.outputEncoding,
       },
       failedResponseHandler: voyageFailedResponseHandler,
       fetch: this.config.fetch,
@@ -350,7 +358,7 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV1<T> {
       usage: response.usage
         ? { tokens: response.usage.total_tokens }
         : undefined,
-      rawResponse: { headers: responseHeaders },
+      response: { headers: responseHeaders, body: rawValue },
     };
   }
 }

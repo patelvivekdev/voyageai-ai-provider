@@ -1,3 +1,5 @@
+import { z } from 'zod/v4';
+
 export type VoyageEmbeddingModelId =
   | 'voyage-3.5'
   | 'voyage-3.5-lite'
@@ -19,14 +21,14 @@ export type VoyageEmbeddingModelId =
   | 'voyage-lite-01'
   | (string & NonNullable<unknown>);
 
-export interface VoyageEmbeddingSettings {
+export const voyageEmbeddingOptions = z.object({
   /**
    * The input type for the embeddings. Defaults to "query".
    * For query, the prompt is "Represent the query for retrieving supporting documents: ".
    * For document, the prompt is "Represent the document for retrieval: ".
    */
 
-  inputType?: 'query' | 'document';
+  inputType: z.enum(['query', 'document']).optional(),
 
   // /**
   //  * Format in which the embeddings are encoded. We support two options:
@@ -45,7 +47,7 @@ export interface VoyageEmbeddingSettings {
    * please refer to the model documentation for the supported values.
    * https://docs.voyageai.com/docs/embeddings
    */
-  outputDimension?: number;
+  outputDimension: z.number().optional(),
 
   /**
    * The data type for the resulting output embeddings.
@@ -64,10 +66,14 @@ export interface VoyageEmbeddingSettings {
    *
    * https://docs.voyageai.com/docs/faq#what-is-quantization-and-output-data-types
    */
-  outputDtype?: 'float' | 'int8' | 'uint8' | 'binary' | 'ubinary';
+  outputDtype: z
+    .enum(['float', 'int8', 'uint8', 'binary', 'ubinary'])
+    .optional(),
 
   /**
    *  Whether to truncate the input texts to fit within the context length.
    */
-  truncation?: boolean;
-}
+  truncation: z.boolean().optional(),
+});
+
+export type VoyageEmbeddingOptions = z.infer<typeof voyageEmbeddingOptions>;

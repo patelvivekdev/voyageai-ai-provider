@@ -1,18 +1,19 @@
 import {
-  type EmbeddingModelV1,
+  type EmbeddingModelV2,
   TooManyEmbeddingValuesForCallError,
 } from '@ai-sdk/provider';
 import {
   combineHeaders,
   createJsonResponseHandler,
   type FetchFunction,
+  parseProviderOptions,
   postJsonToApi,
 } from '@ai-sdk/provider-utils';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
-import type {
-  VoyageEmbeddingModelId,
-  VoyageEmbeddingSettings,
+import {
+  voyageEmbeddingOptions,
+  type VoyageEmbeddingModelId,
 } from '@/voyage-embedding-settings';
 import { voyageFailedResponseHandler } from '@/voyage-error';
 
@@ -23,12 +24,11 @@ type VoyageEmbeddingConfig = {
   fetch?: FetchFunction;
 };
 
-export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
-  readonly specificationVersion = 'v1';
+export class VoyageEmbeddingModel implements EmbeddingModelV2<string> {
+  readonly specificationVersion = 'v2';
   readonly modelId: VoyageEmbeddingModelId;
 
   private readonly config: VoyageEmbeddingConfig;
-  private readonly settings: VoyageEmbeddingSettings;
 
   get provider(): string {
     return this.config.provider;
@@ -42,13 +42,8 @@ export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
     return false;
   }
 
-  constructor(
-    modelId: VoyageEmbeddingModelId,
-    settings: VoyageEmbeddingSettings,
-    config: VoyageEmbeddingConfig,
-  ) {
+  constructor(modelId: VoyageEmbeddingModelId, config: VoyageEmbeddingConfig) {
     this.modelId = modelId;
-    this.settings = settings;
     this.config = config;
   }
 
@@ -56,9 +51,16 @@ export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
     abortSignal,
     values,
     headers,
-  }: Parameters<EmbeddingModelV1<string>['doEmbed']>[0]): Promise<
-    Awaited<ReturnType<EmbeddingModelV1<string>['doEmbed']>>
+    providerOptions,
+  }: Parameters<EmbeddingModelV2<string>['doEmbed']>[0]): Promise<
+    Awaited<ReturnType<EmbeddingModelV2<string>['doEmbed']>>
   > {
+    const embeddingOptions = await parseProviderOptions({
+      provider: 'voyage',
+      providerOptions,
+      schema: voyageEmbeddingOptions,
+    });
+
     if (values.length > this.maxEmbeddingsPerCall) {
       throw new TooManyEmbeddingValuesForCallError({
         maxEmbeddingsPerCall: this.maxEmbeddingsPerCall,
@@ -68,15 +70,19 @@ export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
       });
     }
 
-    const { responseHeaders, value: response } = await postJsonToApi({
+    const {
+      responseHeaders,
+      value: response,
+      rawValue,
+    } = await postJsonToApi({
       abortSignal,
       body: {
         input: values,
         model: this.modelId,
-        input_type: this.settings.inputType,
-        truncation: this.settings.truncation,
-        output_dimension: this.settings.outputDimension,
-        output_dtype: this.settings.outputDtype,
+        input_type: embeddingOptions?.inputType,
+        truncation: embeddingOptions?.truncation,
+        output_dimension: embeddingOptions?.outputDimension,
+        output_dtype: embeddingOptions?.outputDtype,
       },
       failedResponseHandler: voyageFailedResponseHandler,
       fetch: this.config.fetch,
@@ -92,7 +98,7 @@ export class VoyageEmbeddingModel implements EmbeddingModelV1<string> {
       usage: response.usage
         ? { tokens: response.usage.total_tokens }
         : undefined,
-      rawResponse: { headers: responseHeaders },
+      response: { headers: responseHeaders, body: rawValue },
     };
   }
 }
