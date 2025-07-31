@@ -1,5 +1,18 @@
 # voyage-ai-provider
 
+## 2.0.0
+
+### Major Changes
+
+- b7f0922: - update to @ai-sdk/provider and @ai-sdk/provider-utils beta
+  - change to zod v4 internally
+
+### Patch Changes
+
+- 9bf57b7: fix beta versioning
+- b7f0922: - fix the export
+- b7f0922: - export `voyageEmbeddingOptions` and `voyageMultimodalEmbeddingOptions`
+
 ## 2.0.0-beta.4
 
 ### Patch Changes
