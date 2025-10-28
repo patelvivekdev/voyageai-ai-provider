@@ -1,8 +1,9 @@
 import type {
-  EmbeddingModelV2,
-  ImageModelV2,
-  LanguageModelV2,
-  ProviderV2,
+  EmbeddingModelV3,
+  ImageModelV3,
+  LanguageModelV3,
+  ProviderV3,
+  RerankingModelV3,
 } from '@ai-sdk/provider';
 import {
   type FetchFunction,
@@ -17,21 +18,27 @@ import {
   type ImageEmbeddingInput,
   type MultimodalEmbeddingInput,
 } from './voyage-multimodal-embedding-model';
+import type { VoyageRerankingModelId } from './reranking/voyage-reranking-options';
+import { VoyageRerankingModel } from './reranking/voyage-reranking-model';
 
-export interface VoyageProvider extends ProviderV2 {
-  (modelId: VoyageEmbeddingModelId): EmbeddingModelV2<string>;
+export interface VoyageProvider extends ProviderV3 {
+  (modelId: VoyageEmbeddingModelId): EmbeddingModelV3<string>;
 
   textEmbeddingModel: (
     modelId: VoyageEmbeddingModelId,
-  ) => EmbeddingModelV2<string>;
+  ) => EmbeddingModelV3<string>;
 
   imageEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-  ) => EmbeddingModelV2<ImageEmbeddingInput>;
+  ) => EmbeddingModelV3<ImageEmbeddingInput>;
 
   multimodalEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-  ) => EmbeddingModelV2<MultimodalEmbeddingInput>;
+  ) => EmbeddingModelV3<MultimodalEmbeddingInput>;
+
+  reranking: (modelId: VoyageRerankingModelId) => RerankingModelV3;
+
+  rerankingModel: (modelId: VoyageRerankingModelId) => RerankingModelV3;
 }
 
 export interface VoyageProviderSettings {
@@ -115,6 +122,14 @@ export function createVoyage(
       'multimodal',
     );
 
+  const createRerankingModel = (modelId: VoyageRerankingModelId) =>
+    new VoyageRerankingModel(modelId, {
+      provider: 'voyage.reranking',
+      baseURL,
+      headers: getHeaders,
+      fetch: options.fetch,
+    });
+
   const provider = function (modelId: VoyageEmbeddingModelId) {
     if (new.target) {
       throw new Error(
@@ -129,14 +144,17 @@ export function createVoyage(
   provider.imageEmbeddingModel = createImageEmbeddingModel;
   provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
 
-  provider.chat = provider.languageModel = (): LanguageModelV2 => {
+  provider.chat = provider.languageModel = (): LanguageModelV3 => {
     throw new Error('languageModel method is not implemented.');
   };
-  provider.imageModel = (): ImageModelV2 => {
+  provider.imageModel = (): ImageModelV3 => {
     throw new Error('imageModel method is not implemented.');
   };
 
-  return provider as VoyageProvider;
+  provider.reranking = createRerankingModel;
+  provider.rerankingModel = createRerankingModel;
+
+  return provider as unknown as VoyageProvider;
 }
 
 /**

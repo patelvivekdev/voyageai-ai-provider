@@ -1,5 +1,12 @@
 # voyage-ai-provider
 
+## 3.0.0-beta.0
+
+### Major Changes
+
+- Updated to AI SDK v6
+  - Added reranking support
+
 ## 2.0.0
 
 ### Major Changes

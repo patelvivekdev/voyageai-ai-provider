@@ -18,6 +18,7 @@
 
     /* Module Resolution */
     "module": "Preserve",
+    "baseUrl": ".",
 
     /* Type Checking */
     "noEmit": true,

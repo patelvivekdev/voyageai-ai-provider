@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "voyage-ai-provider": "2.0.0"
+  },
+  "changesets": ["soft-oranges-bathe"]
+}

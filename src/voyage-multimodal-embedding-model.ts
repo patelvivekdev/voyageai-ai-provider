@@ -1,5 +1,5 @@
 import {
-  type EmbeddingModelV2,
+  type EmbeddingModelV3,
   TooManyEmbeddingValuesForCallError,
 } from '@ai-sdk/provider';
 import {
@@ -86,8 +86,8 @@ export type VoyageMultimodalInput = {
   content: VoyageMultimodalContentItem[];
 };
 
-export class MultimodalEmbeddingModel<T> implements EmbeddingModelV2<T> {
-  readonly specificationVersion = 'v2';
+export class MultimodalEmbeddingModel<T> implements EmbeddingModelV3<T> {
+  readonly specificationVersion = 'v3';
   readonly modelId: VoyageMultimodalEmbeddingModelId;
   readonly modelType: 'multimodal' | 'image';
 
@@ -311,8 +311,8 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV2<T> {
     values,
     headers,
     providerOptions,
-  }: Parameters<EmbeddingModelV2<T>['doEmbed']>[0]): Promise<
-    Awaited<ReturnType<EmbeddingModelV2<T>['doEmbed']>>
+  }: Parameters<EmbeddingModelV3<T>['doEmbed']>[0]): Promise<
+    Awaited<ReturnType<EmbeddingModelV3<T>['doEmbed']>>
   > {
     const embeddingOptions = await parseProviderOptions({
       provider: 'voyage',
