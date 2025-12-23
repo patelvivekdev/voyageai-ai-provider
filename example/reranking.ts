@@ -1,6 +1,6 @@
+import { rerank } from 'ai';
 import type { VoyageRerankingOptions } from '../src/reranking/voyage-reranking-options';
 import { createVoyage } from '../src/voyage-provider';
-import { rerank } from 'ai';
 
 const voyage = createVoyage({
   apiKey: process.env.VOYAGE_API_KEY,

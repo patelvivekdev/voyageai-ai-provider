@@ -229,6 +229,79 @@ const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
 | ------------------- | ----------------------- | ------------------- |
 | voyage-multimodal-3 | 32,000                  | 1024                |
 
+### Reranking
+
+Reranking helps improve search results by reordering documents based on their relevance to a query.
+
+```typescript
+import { voyage } from 'voyage-ai-provider';
+import { rerank } from 'ai';
+
+const rerankingModel = voyage.reranking('rerank-2.5');
+
+const result = await rerank({
+  model: rerankingModel,
+  query: 'talk about rain',
+  documents: [
+    'sunny day at the beach',
+    'rainy day in the city',
+    'snowy mountain peak',
+  ],
+  topN: 2,
+});
+```
+
+#### How to pass additional settings to the reranking model
+
+The settings object should contain the settings you want to add to the model. You can find the available settings for the model in the Voyage API documentation: https://docs.voyageai.com/reference/reranker-api
+
+```typescript
+import { voyage, type VoyageRerankingOptions } from 'voyage-ai-provider';
+import { rerank } from 'ai';
+
+const rerankingModel = voyage.reranking('rerank-2.5');
+
+const result = await rerank({
+  model: rerankingModel,
+  query: 'talk about rain',
+  documents: [
+    'sunny day at the beach',
+    'rainy day in the city',
+    'snowy mountain peak',
+  ],
+  topN: 2,
+  providerOptions: {
+    voyage: {
+      returnDocuments: true, // Return documents in the response
+      truncation: true, // Truncate inputs to fit context length
+    } satisfies VoyageRerankingOptions,
+  },
+});
+```
+
+> [!NOTE]
+> The following constraints apply to reranking:
+>
+> - Query token limits: rerank-2.5 and rerank-2.5-lite (8,000), rerank-2 (4,000), rerank-2-lite and rerank-1 (2,000), rerank-lite-1 (1,000)
+> - Query + document token limits: rerank-2.5 and rerank-2.5-lite (32,000), rerank-2 (16,000), rerank-2-lite and rerank-1 (8,000), rerank-lite-1 (4,000)
+> - If `truncation` is set to `false`, an error will be raised when these limits are exceeded
+
+## Voyage Reranking Models
+
+| Model           | Query Token Limit | Query + Document Token Limit |
+| --------------- | ----------------- | ---------------------------- |
+| rerank-2.5      | 8,000             | 32,000                       |
+| rerank-2.5-lite | 8,000             | 32,000                       |
+| rerank-2        | 4,000             | 16,000                       |
+| rerank-lite-2   | 2,000             | 8,000                        |
+| rerank-1        | 2,000             | 8,000                        |
+| rerank-lite-1   | 1,000             | 4,000                        |
+
+> [!TIP]
+> Use `rerank-2.5` or `rerank-2.5-lite` for the best performance and accuracy.
+> Older models (rerank-2, rerank-lite-2, rerank-1, rerank-lite-1) are available but may have lower performance.
+> https://docs.voyageai.com/docs/reranker
+
 ## Authors
 
 - [patelvivekdev](https://patelvivek.dev)
