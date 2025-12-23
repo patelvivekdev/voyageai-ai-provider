@@ -13,28 +13,22 @@ import {
 import { VoyageEmbeddingModel } from './voyage-embedding-model';
 import type { VoyageEmbeddingModelId } from './voyage-embedding-settings';
 import type { VoyageMultimodalEmbeddingModelId } from './voyage-multimodal-embedding-settings';
-import {
-  MultimodalEmbeddingModel,
-  type ImageEmbeddingInput,
-  type MultimodalEmbeddingInput,
-} from './voyage-multimodal-embedding-model';
+import { MultimodalEmbeddingModel } from './voyage-multimodal-embedding-model';
 import type { VoyageRerankingModelId } from './reranking/voyage-reranking-options';
 import { VoyageRerankingModel } from './reranking/voyage-reranking-model';
 
 export interface VoyageProvider extends ProviderV3 {
-  (modelId: VoyageEmbeddingModelId): EmbeddingModelV3<string>;
+  (modelId: VoyageEmbeddingModelId): EmbeddingModelV3;
 
-  textEmbeddingModel: (
-    modelId: VoyageEmbeddingModelId,
-  ) => EmbeddingModelV3<string>;
+  textEmbeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
 
   imageEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-  ) => EmbeddingModelV3<ImageEmbeddingInput>;
+  ) => EmbeddingModelV3;
 
   multimodalEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-  ) => EmbeddingModelV3<MultimodalEmbeddingInput>;
+  ) => EmbeddingModelV3;
 
   reranking: (modelId: VoyageRerankingModelId) => RerankingModelV3;
 

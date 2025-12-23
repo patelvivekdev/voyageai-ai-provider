@@ -1,6 +1,6 @@
 {
   "name": "voyage-ai-provider",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0",
   "description": "Voyage AI Provider for running Voyage AI models with Vercel AI SDK",
   "author": "Vivek Patel <me@patelvivek.dev>",
   "license": "MIT",
@@ -48,21 +48,21 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/provider": "^3.0.0-beta.12",
-    "@ai-sdk/provider-utils": "^4.0.0-beta.26"
+    "@ai-sdk/provider": "^3.0.0",
+    "@ai-sdk/provider-utils": "^4.0.1"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "^1.0.0-beta.0",
+    "@ai-sdk/test-server": "^1.0.0",
     "@arethetypeswrong/cli": "^0.17.4",
-    "@changesets/cli": "^2.29.7",
+    "@changesets/cli": "^2.29.8",
     "@edge-runtime/vm": "^5.0.0",
-    "@types/bun": "^1.3.1",
+    "@types/bun": "^1.3.5",
     "@vitest/ui": "^3.2.4",
-    "msw": "^2",
-    "prettier": "^3.6.2",
-    "tsup": "^8.5.0",
+    "msw": "^2.12.4",
+    "prettier": "^3.7.4",
+    "tsup": "^8.5.1",
     "typescript": "5.5.4",
-    "typescript-eslint": "^8.46.2",
+    "typescript-eslint": "^8.50.1",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^3.2.4",
     "zod": "^3.25.76"

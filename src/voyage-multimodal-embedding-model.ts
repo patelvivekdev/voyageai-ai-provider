@@ -86,7 +86,7 @@ export type VoyageMultimodalInput = {
   content: VoyageMultimodalContentItem[];
 };
 
-export class MultimodalEmbeddingModel<T> implements EmbeddingModelV3<T> {
+export class MultimodalEmbeddingModel implements EmbeddingModelV3 {
   readonly specificationVersion = 'v3';
   readonly modelId: VoyageMultimodalEmbeddingModelId;
   readonly modelType: 'multimodal' | 'image';
@@ -115,31 +115,39 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV3<T> {
     this.modelType = modelType;
   }
 
-  private transformInputs(values: T[]): VoyageMultimodalInput[] {
+  private transformInputs(values: string[]): VoyageMultimodalInput[] {
     return values.map((value) => this.transformSingleInput(value));
   }
 
-  private transformSingleInput(value: T): VoyageMultimodalInput {
-    // Handle string inputs
-    if (typeof value === 'string') {
+  private transformSingleInput(value: string): VoyageMultimodalInput {
+    // Try to parse as JSON first (for complex types serialized as strings)
+    let parsedValue: unknown = value;
+    try {
+      parsedValue = JSON.parse(value);
+    } catch {
+      // Not JSON, treat as plain string
+    }
+
+    // Handle string inputs (plain strings or after JSON parsing)
+    if (typeof parsedValue === 'string') {
       if (this.modelType === 'image') {
         // For image model, treat strings as image URLs or base64
-        return this.createImageContent(value);
+        return this.createImageContent(parsedValue);
       }
       // For multimodal model, treat strings as text unless they look like images
-      if (this.isImageString(value)) {
-        return this.createImageContent(value);
+      if (this.isImageString(parsedValue)) {
+        return this.createImageContent(parsedValue);
       }
-      return this.createTextContent(value);
+      return this.createTextContent(parsedValue);
     }
 
     // Handle array inputs
-    if (Array.isArray(value)) {
-      return this.transformArrayInput(value);
+    if (Array.isArray(parsedValue)) {
+      return this.transformArrayInput(parsedValue);
     }
 
     // Handle object inputs
-    const input = value as Record<string, unknown>;
+    const input = parsedValue as Record<string, unknown>;
 
     // Handle pre-formatted content items { content: ContentItem[] }
     if (input.content && Array.isArray(input.content)) {
@@ -153,11 +161,11 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV3<T> {
 
     // Fallback: treat as text if it's a primitive value (only for multimodal)
     if (this.modelType === 'multimodal') {
-      return this.createTextContent(String(value));
+      return this.createTextContent(String(parsedValue));
     }
 
     throw new Error(
-      `Unsupported input format for ${this.modelType} model: ${JSON.stringify(value)}`,
+      `Unsupported input format for ${this.modelType} model: ${JSON.stringify(parsedValue)}`,
     );
   }
 
@@ -311,8 +319,8 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV3<T> {
     values,
     headers,
     providerOptions,
-  }: Parameters<EmbeddingModelV3<T>['doEmbed']>[0]): Promise<
-    Awaited<ReturnType<EmbeddingModelV3<T>['doEmbed']>>
+  }: Parameters<EmbeddingModelV3['doEmbed']>[0]): Promise<
+    Awaited<ReturnType<EmbeddingModelV3['doEmbed']>>
   > {
     const embeddingOptions = await parseProviderOptions({
       provider: 'voyage',
@@ -359,6 +367,7 @@ export class MultimodalEmbeddingModel<T> implements EmbeddingModelV3<T> {
         ? { tokens: response.usage.total_tokens }
         : undefined,
       response: { headers: responseHeaders, body: rawValue },
+      warnings: [],
     };
   }
 }
