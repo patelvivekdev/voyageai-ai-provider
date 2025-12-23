@@ -1,5 +1,5 @@
-import type { EmbeddingModelV2Embedding } from '@ai-sdk/provider';
-import { createTestServer } from '@ai-sdk/provider-utils/test';
+import type { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
+import { createTestServer } from '@ai-sdk/test-server/with-vitest';
 import { createVoyage } from './voyage-provider';
 
 const dummyEmbeddings = [
@@ -12,7 +12,7 @@ const provider = createVoyage({
   baseURL: 'https://api.voyage.ai/v1',
   apiKey: 'test-api-key',
 });
-const model = provider('voyage-3-lite');
+const model = provider.textEmbeddingModel('voyage-3-lite');
 const server = createTestServer({
   'https://api.voyage.ai/v1/embeddings': {},
 });
@@ -26,7 +26,7 @@ describe('doEmbed', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV2Embedding[];
+    embeddings?: EmbeddingModelV3Embedding[];
     usage?: { prompt_tokens: number; total_tokens: number };
     headers?: Record<string, string>;
   } = {}) {

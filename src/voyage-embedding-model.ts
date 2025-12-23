@@ -1,5 +1,5 @@
 import {
-  type EmbeddingModelV2,
+  type EmbeddingModelV3,
   TooManyEmbeddingValuesForCallError,
 } from '@ai-sdk/provider';
 import {
@@ -24,8 +24,8 @@ type VoyageEmbeddingConfig = {
   fetch?: FetchFunction;
 };
 
-export class VoyageEmbeddingModel implements EmbeddingModelV2<string> {
-  readonly specificationVersion = 'v2';
+export class VoyageEmbeddingModel implements EmbeddingModelV3 {
+  readonly specificationVersion = 'v3';
   readonly modelId: VoyageEmbeddingModelId;
 
   private readonly config: VoyageEmbeddingConfig;
@@ -52,8 +52,8 @@ export class VoyageEmbeddingModel implements EmbeddingModelV2<string> {
     values,
     headers,
     providerOptions,
-  }: Parameters<EmbeddingModelV2<string>['doEmbed']>[0]): Promise<
-    Awaited<ReturnType<EmbeddingModelV2<string>['doEmbed']>>
+  }: Parameters<EmbeddingModelV3['doEmbed']>[0]): Promise<
+    Awaited<ReturnType<EmbeddingModelV3['doEmbed']>>
   > {
     const embeddingOptions = await parseProviderOptions({
       provider: 'voyage',
@@ -99,6 +99,7 @@ export class VoyageEmbeddingModel implements EmbeddingModelV2<string> {
         ? { tokens: response.usage.total_tokens }
         : undefined,
       response: { headers: responseHeaders, body: rawValue },
+      warnings: [],
     };
   }
 }

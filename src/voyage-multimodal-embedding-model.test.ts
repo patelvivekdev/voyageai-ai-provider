@@ -1,5 +1,5 @@
-import type { EmbeddingModelV2Embedding } from '@ai-sdk/provider';
-import { createTestServer } from '@ai-sdk/provider-utils/test';
+import type { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
+import { createTestServer } from '@ai-sdk/test-server/with-vitest';
 import { createVoyage } from './voyage-provider';
 import type {
   MultimodalEmbeddingInput,
@@ -35,7 +35,7 @@ describe('Multimodal Embedding Model', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV2Embedding[];
+    embeddings?: EmbeddingModelV3Embedding[];
     usage?: {
       text_tokens?: number;
       image_pixels?: number;
@@ -684,7 +684,7 @@ describe('Image Embedding Model', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV2Embedding[];
+    embeddings?: EmbeddingModelV3Embedding[];
     usage?: {
       text_tokens?: number;
       image_pixels?: number;

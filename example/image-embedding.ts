@@ -1,6 +1,4 @@
 import { createVoyage, type ImageEmbeddingInput } from '../src';
-import { voyageEmbeddingOptions } from '../src/voyage-embedding-settings';
-import { voyageMultimodalEmbeddingOptions } from '../src/voyage-multimodal-embedding-settings';
 import { embed, embedMany } from 'ai';
 const voyage = createVoyage({
   apiKey: process.env.VOYAGE_API_KEY,
