@@ -229,6 +229,40 @@ const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
 | ------------------- | ----------------------- | ------------------- |
 | voyage-multimodal-3 | 32,000                  | 1024                |
 
+### Contextualized Text Embedding
+
+```typescript
+import { voyage } from 'voyage-ai-provider';
+import { embedMany } from 'ai';
+
+const embeddingModel =
+  voyage.contextualizedEmbeddingModel('voyage-context-3');
+
+export const generateEmbeddings = async (
+  value: string,
+): Promise<Array<{ embedding: number[]; content: string }>> => {
+  // Generate chunks from the input value
+  const chunks = value.split('\n');
+
+  // Optional: You can also split the input value by comma
+  // const chunks = value.split('.');
+
+  // Or you can use LLM to generate chunks(summarize) from the input value
+
+  const { embeddings } = await embedMany({
+    model: embeddingModel,
+    values: chunks,
+  });
+  return embeddings.map((e, i) => ({ content: chunks[i], embedding: e }));
+};
+```
+
+## Contextualized Embedding Models
+
+| Model            | Context Length (tokens) | Embedding Dimension            |
+| ---------------- | ----------------------- | ------------------------------ |
+| voyage-context-3 | 32,000                  | 1024 (default), 256, 512, 2048 |
+
 ### Reranking
 
 Reranking helps improve search results by reordering documents based on their relevance to a query.

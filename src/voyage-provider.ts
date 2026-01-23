@@ -16,11 +16,17 @@ import type { VoyageMultimodalEmbeddingModelId } from './voyage-multimodal-embed
 import { MultimodalEmbeddingModel } from './voyage-multimodal-embedding-model';
 import type { VoyageRerankingModelId } from './reranking/voyage-reranking-options';
 import { VoyageRerankingModel } from './reranking/voyage-reranking-model';
+import type { VoyageContextualizedEmbeddingModelId } from './voyage-contextualized-embedding-settings';
+import { VoyageContextualizedEmbeddingModel } from './voyage-contextualized-embedding-model';
 
 export interface VoyageProvider extends ProviderV3 {
   (modelId: VoyageEmbeddingModelId): EmbeddingModelV3;
 
   textEmbeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
+
+  contextualizedEmbeddingModel: (
+    modelId: VoyageContextualizedEmbeddingModelId,
+  ) => EmbeddingModelV3;
 
   imageEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
@@ -88,6 +94,16 @@ export function createVoyage(
       fetch: options.fetch,
     });
 
+  const createContextualizedEmbeddingModel = (
+    modelId: VoyageContextualizedEmbeddingModelId,
+  ) =>
+    new VoyageContextualizedEmbeddingModel(modelId, {
+      provider: 'voyage.contextualized.embedding',
+      baseURL,
+      headers: getHeaders,
+      fetch: options.fetch,
+    });
+
   const createImageEmbeddingModel = (
     modelId: VoyageMultimodalEmbeddingModelId,
   ) =>
@@ -135,6 +151,7 @@ export function createVoyage(
   };
 
   provider.textEmbeddingModel = createEmbeddingModel;
+  provider.contextualizedEmbeddingModel = createContextualizedEmbeddingModel;
   provider.imageEmbeddingModel = createImageEmbeddingModel;
   provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
 
