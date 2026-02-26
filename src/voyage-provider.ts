@@ -20,6 +20,11 @@ import { VoyageRerankingModel } from './reranking/voyage-reranking-model';
 export interface VoyageProvider extends ProviderV3 {
   (modelId: VoyageEmbeddingModelId): EmbeddingModelV3;
 
+  embeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
+
+  /**
+   * @deprecated Use `embeddingModel` instead.
+   */
   textEmbeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
 
   imageEmbeddingModel: (
@@ -134,6 +139,7 @@ export function createVoyage(
     return createEmbeddingModel(modelId);
   };
 
+  provider.embeddingModel = createEmbeddingModel;
   provider.textEmbeddingModel = createEmbeddingModel;
   provider.imageEmbeddingModel = createImageEmbeddingModel;
   provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
