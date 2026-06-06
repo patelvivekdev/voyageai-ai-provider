@@ -90,112 +90,135 @@ const embeddingModel = voyage.textEmbeddingModel(
 );
 ```
 
-### Image Embedding
+### Image & Multi-modal Embedding
 
-#### Example 1: Embed a single image as single embedding
+Multimodal and image embeddings both use the `voyage-multimodal-3` model and the
+same `/multimodalembeddings` endpoint. Following the AI SDK convention (and the
+official providers such as Google), the `embed`/`embedMany` `values` array holds
+the **text** for each embedding, and any non-text content (images) is passed via
+`providerOptions.voyage.content`.
+
+`content` is an array aligned to `values` by index: `content[i]` are the extra
+parts merged with the text in `values[i]`. Its length must equal `values.length`.
+Use `null` for entries that are text-only. For an image-only embedding, pass an
+empty string (`''`) for that value.
+
+Each content part is one of:
+
+- `{ type: 'text', text: string }`
+- `{ type: 'image_url', image_url: string }`
+- `{ type: 'image_base64', image_base64: string }`
+
+#### Example 1: A single image per embedding (image-only)
 
 ```typescript
-import { voyage, ImageEmbeddingInput } from 'voyage-ai-provider';
+import {
+  voyage,
+  type VoyageMultimodalEmbeddingOptions,
+} from 'voyage-ai-provider';
 import { embedMany } from 'ai';
 
 const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
 
-const { embeddings } = await embedMany<ImageEmbeddingInput>({
+const { embeddings } = await embedMany({
   model: imageModel,
-  values: [
-    {
-      image:
-        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
-    },
-    {
-      image: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
-    },
-  ],
-  // or you can pass the array of images url and base64 string directly
-  // values: [
-  //   'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
-  //   'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
-  // ],
-});
-```
-
-#### Example 2: Embed multiple images as single embedding
-
-```typescript
-import { voyage, ImageEmbeddingInput } from 'voyage-ai-provider';
-import { embedMany } from 'ai';
-
-const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
-
-const { embeddings } = await embedMany<ImageEmbeddingInput>({
-  model: imageModel,
-  values: [
-    {
-      image: [
-        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
-        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+  values: ['', ''], // one empty string per image-only embedding
+  providerOptions: {
+    voyage: {
+      content: [
+        [
+          {
+            type: 'image_url',
+            image_url:
+              'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+          },
+        ],
+        [
+          {
+            type: 'image_base64',
+            image_base64: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+          },
+        ],
       ],
-    },
-  ],
+    } satisfies VoyageMultimodalEmbeddingOptions,
+  },
 });
 ```
 
-#### Example 3: Embed multiple images as multiple embeddings
+#### Example 2: Multiple images in a single embedding
 
 ```typescript
-import { voyage, ImageEmbeddingInput } from 'voyage-ai-provider';
+import {
+  voyage,
+  type VoyageMultimodalEmbeddingOptions,
+} from 'voyage-ai-provider';
 import { embedMany } from 'ai';
 
 const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
 
-const { embeddings } = await embedMany<ImageEmbeddingInput>({
+const { embeddings } = await embedMany({
   model: imageModel,
-  values: [
-    {
-      image:
-        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
-    },
-    {
-      image: [
-        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
-        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+  values: [''],
+  providerOptions: {
+    voyage: {
+      content: [
+        [
+          {
+            type: 'image_url',
+            image_url:
+              'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+          },
+          {
+            type: 'image_base64',
+            image_base64: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+          },
+        ],
       ],
-    },
-  ],
+    } satisfies VoyageMultimodalEmbeddingOptions,
+  },
 });
 ```
 
-> [!TIP]
-> If you are getting error for image url not found, convert image to base64 and pass the base64 string to the image array.
-> The value should be a Base64-encoded image in the data URL format data:[<mediatype>];base64,<data>.
-> Currently supported mediatypes are: image/png, image/jpeg, image/webp, and image/gif.
-
-### Multi-modal Embedding
-
-#### Example 1: Embed multiple texts and images as single embedding
+#### Example 3: Text and images combined per embedding
 
 ```typescript
-import { voyage, MultimodalEmbeddingInput } from 'voyage-ai-provider';
+import {
+  voyage,
+  type VoyageMultimodalEmbeddingOptions,
+} from 'voyage-ai-provider';
 import { embedMany } from 'ai';
 
 const multimodalModel = voyage.multimodalEmbeddingModel('voyage-multimodal-3');
 
-const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
+const { embeddings } = await embedMany({
   model: multimodalModel,
-  values: [
-    {
-      text: ['Hello, world!', 'This is a banana'],
-      image: [
-        'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+  values: ['This is a banana', 'This is a coding test'],
+  providerOptions: {
+    voyage: {
+      content: [
+        [
+          {
+            type: 'image_url',
+            image_url:
+              'https://raw.githubusercontent.com/voyage-ai/voyage-multimodal-3/refs/heads/main/images/banana_200_x_200.jpg',
+          },
+        ],
+        [
+          {
+            type: 'image_base64',
+            image_base64: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...',
+          },
+        ],
       ],
-    },
-    {
-      text: ['Hello, coders!', 'This is a coding test'],
-      image: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...'],
-    },
-  ],
+    } satisfies VoyageMultimodalEmbeddingOptions,
+  },
 });
 ```
+
+> [!TIP]
+> If you are getting an error for an image URL not found, convert the image to base64 and pass it as an `image_base64` part instead.
+> The value should be a Base64-encoded image in the data URL format `data:[<mediatype>];base64,<data>`.
+> Currently supported mediatypes are: image/png, image/jpeg, image/webp, and image/gif.
 
 > [!NOTE]
 > The following constraints apply to the values list:
@@ -207,27 +230,31 @@ const { embeddings } = await embedMany<MultimodalEmbeddingInput>({
 
 | Model                 | Context Length (tokens) | Embedding Dimension            |
 | --------------------- | ----------------------- | ------------------------------ |
-| voyage-3.5            | 32,000                  | 1024 (default), 256, 512 2048  |
-| voyage-3.5-lite       | 32,000                  | 1024 (default), 256, 512 2048  |
-| voyage-3-large        | 32,000                  | 1024 (default), 256, 512, 2048 |
-| voyage-3              | 32,000                  | 1024                           |
-| voyage-3-lite         | 32,000                  | 512                            |
+| voyage-4-large        | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-4              | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-4-lite         | 32,000                  | 1024 (default), 256, 512, 2048 |
 | voyage-code-3         | 32,000                  | 1024 (default), 256, 512, 2048 |
 | voyage-finance-2      | 32,000                  | 1024                           |
-| voyage-multilingual-2 | 32,000                  | 1024                           |
 | voyage-law-2          | 16,000                  | 1024                           |
 | voyage-code-2         | 16,000                  | 1536                           |
+| voyage-3-large        | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-3.5            | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-3.5-lite       | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-3              | 32,000                  | 1024                           |
+| voyage-3-lite         | 32,000                  | 512                            |
+| voyage-multilingual-2 | 32,000                  | 1024                           |
 
 > [!WARNING]
 > The older models are deprecated and will be removed in the future.
 > Use the latest models instead.
 > https://docs.voyageai.com/docs/embeddings
 
-## Multi-modal Embedding
+## Multi-modal Embedding Models
 
-| Model               | Context Length (tokens) | Embedding Dimension |
-| ------------------- | ----------------------- | ------------------- |
-| voyage-multimodal-3 | 32,000                  | 1024                |
+| Model                 | Context Length (tokens) | Embedding Dimension            |
+| --------------------- | ----------------------- | ------------------------------ |
+| voyage-multimodal-3.5 | 32,000                  | 1024 (default), 256, 512, 2048 |
+| voyage-multimodal-3   | 32,000                  | 1024                           |
 
 ### Reranking
 
@@ -293,13 +320,13 @@ const result = await rerank({
 | rerank-2.5      | 8,000             | 32,000                       |
 | rerank-2.5-lite | 8,000             | 32,000                       |
 | rerank-2        | 4,000             | 16,000                       |
-| rerank-lite-2   | 2,000             | 8,000                        |
+| rerank-2-lite   | 2,000             | 8,000                        |
 | rerank-1        | 2,000             | 8,000                        |
 | rerank-lite-1   | 1,000             | 4,000                        |
 
 > [!TIP]
 > Use `rerank-2.5` or `rerank-2.5-lite` for the best performance and accuracy.
-> Older models (rerank-2, rerank-lite-2, rerank-1, rerank-lite-1) are available but may have lower performance.
+> Older models (rerank-2, rerank-2-lite, rerank-1, rerank-lite-1) are available but may have lower performance.
 > https://docs.voyageai.com/docs/reranker
 
 ## Authors
