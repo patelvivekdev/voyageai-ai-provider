@@ -20,13 +20,30 @@ import { VoyageRerankingModel } from './reranking/voyage-reranking-model';
 export interface VoyageProvider extends ProviderV3 {
   (modelId: VoyageEmbeddingModelId): EmbeddingModelV3;
 
+  embeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
+
+  /**
+   * @deprecated Use `embeddingModel` instead. `textEmbeddingModel` is kept for
+   * backwards compatibility and points to the same implementation.
+   */
   textEmbeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
 
-  imageEmbeddingModel: (
+  /**
+   * Multimodal (text and/or image) embeddings.
+   *
+   * Voyage exposes a single multimodal endpoint, so `imageEmbeddingModel` and
+   * `multimodalEmbeddingModel` are equivalent. Pass text in `values` and images
+   * via `providerOptions.voyage.content`.
+   */
+  multimodalEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
   ) => EmbeddingModelV3;
 
-  multimodalEmbeddingModel: (
+  /**
+   * Alias for {@link VoyageProvider.multimodalEmbeddingModel} — both use the
+   * `voyage-multimodal-3` model and the same multimodal endpoint.
+   */
+  imageEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
   ) => EmbeddingModelV3;
 
@@ -88,33 +105,15 @@ export function createVoyage(
       fetch: options.fetch,
     });
 
-  const createImageEmbeddingModel = (
-    modelId: VoyageMultimodalEmbeddingModelId,
-  ) =>
-    new MultimodalEmbeddingModel(
-      modelId,
-      {
-        provider: 'voyage.image.embedding',
-        baseURL,
-        headers: getHeaders,
-        fetch: options.fetch,
-      },
-      'image',
-    );
-
   const createMultimodalEmbeddingModel = (
     modelId: VoyageMultimodalEmbeddingModelId,
   ) =>
-    new MultimodalEmbeddingModel(
-      modelId,
-      {
-        provider: 'voyage.multimodal.embedding',
-        baseURL,
-        headers: getHeaders,
-        fetch: options.fetch,
-      },
-      'multimodal',
-    );
+    new MultimodalEmbeddingModel(modelId, {
+      provider: 'voyage.multimodal.embedding',
+      baseURL,
+      headers: getHeaders,
+      fetch: options.fetch,
+    });
 
   const createRerankingModel = (modelId: VoyageRerankingModelId) =>
     new VoyageRerankingModel(modelId, {
@@ -134,9 +133,10 @@ export function createVoyage(
     return createEmbeddingModel(modelId);
   };
 
+  provider.embeddingModel = createEmbeddingModel;
   provider.textEmbeddingModel = createEmbeddingModel;
-  provider.imageEmbeddingModel = createImageEmbeddingModel;
   provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
+  provider.imageEmbeddingModel = createMultimodalEmbeddingModel;
 
   provider.chat = provider.languageModel = (): LanguageModelV3 => {
     throw new Error('languageModel method is not implemented.');

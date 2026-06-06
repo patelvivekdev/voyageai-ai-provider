@@ -1,8 +1,7 @@
-import type { TextEmbeddingInput } from '../src';
+import { embed, embedMany } from 'ai';
+import { createVoyage } from '../src/voyage-provider';
 import type { VoyageEmbeddingOptions } from '../src/voyage-embedding-settings';
 import type { VoyageMultimodalEmbeddingOptions } from '../src/voyage-multimodal-embedding-settings';
-import { createVoyage } from '../src/voyage-provider';
-import { embed, embedMany } from 'ai';
 
 const voyage = createVoyage({
   apiKey: process.env.VOYAGE_API_KEY,
@@ -15,7 +14,7 @@ async function textEmbeddingExamples() {
 
   const textModel = voyage.textEmbeddingModel('voyage-3-lite');
 
-  const embedding = await embed<TextEmbeddingInput>({
+  const embedding = await embed({
     model: textModel,
     value: 'The quick brown fox jumps over the lazy dog',
     providerOptions: {
@@ -28,7 +27,7 @@ async function textEmbeddingExamples() {
 
   console.log('\n🔤 Regular Text Embedding Model:');
 
-  const simpleTexts = await embedMany<TextEmbeddingInput>({
+  const simpleTexts = await embedMany({
     model: textModel,
     values: [
       'The quick brown fox jumps over the lazy dog',
@@ -37,10 +36,7 @@ async function textEmbeddingExamples() {
     ],
   });
   for (const [index, embedding] of simpleTexts.embeddings.entries()) {
-    console.log(`Index: ${index}`);
-    console.log(`Embedding: ${embedding}`);
-    console.log(`Length: ${embedding.length}`);
-    console.log(`--------------------------------`);
+    console.log(`Index: ${index}, Length: ${embedding.length}`);
   }
 
   console.log('\n🔀 Multimodal Model - Text Only Usage:');
@@ -49,7 +45,7 @@ async function textEmbeddingExamples() {
     'voyage-multimodal-3',
   );
 
-  const singleTexts = await embedMany<TextEmbeddingInput>({
+  const singleTexts = await embedMany({
     model: multimodalModel,
     values: [
       'Customer service inquiry about product return',
@@ -63,42 +59,7 @@ async function textEmbeddingExamples() {
     },
   });
   for (const [index, embedding] of singleTexts.embeddings.entries()) {
-    console.log(`Index: ${index}`);
-    console.log(`Embedding: ${embedding}`);
-    console.log(`Length: ${embedding.length}`);
-    console.log(`--------------------------------`);
-  }
-
-  const groupedTexts = await embedMany<TextEmbeddingInput>({
-    model: multimodalModel,
-    values: [
-      // E-commerce product: title + description + features
-      [
-        'Premium Wireless Bluetooth Headphones',
-        'Experience superior sound quality with active noise cancellation',
-        'Battery life: 30 hours, Quick charge: 15 min = 3 hours playback',
-        'Compatible with iOS, Android, and all Bluetooth devices',
-      ],
-      // Blog post: title + summary + tags
-      [
-        'The Future of Artificial Intelligence in Healthcare',
-        'Exploring how AI is revolutionizing medical diagnosis and treatment',
-        'Tags: AI, healthcare, machine learning, medical technology, innovation',
-      ],
-      // Job listing: title + company + description
-      [
-        'Senior Software Engineer - Full Stack',
-        'TechCorp Inc. - Leading technology company',
-        'Build scalable web applications using React, Node.js, and cloud technologies',
-        'Requirements: 5+ years experience, strong problem-solving skills',
-      ],
-    ],
-  });
-  for (const [index, embedding] of groupedTexts.embeddings.entries()) {
-    console.log(`Index: ${index}`);
-    console.log(`Embedding: ${embedding}`);
-    console.log(`Length: ${embedding.length}`);
-    console.log(`--------------------------------`);
+    console.log(`Index: ${index}, Length: ${embedding.length}`);
   }
 }
 

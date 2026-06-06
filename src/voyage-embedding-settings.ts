@@ -1,16 +1,22 @@
 import { z } from 'zod/v4';
 
 export type VoyageEmbeddingModelId =
-  | 'voyage-3.5'
-  | 'voyage-3.5-lite'
-  | 'voyage-3-large'
-  | 'voyage-3'
-  | 'voyage-3-lite'
+  // Latest generation (recommended)
+  | 'voyage-4-large'
+  | 'voyage-4'
+  | 'voyage-4-lite'
   | 'voyage-code-3'
   | 'voyage-finance-2'
-  | 'voyage-multilingual-2'
   | 'voyage-law-2'
   | 'voyage-code-2'
+
+  // Previous generation
+  | 'voyage-3-large'
+  | 'voyage-3.5'
+  | 'voyage-3.5-lite'
+  | 'voyage-3'
+  | 'voyage-3-lite'
+  | 'voyage-multilingual-2'
 
   // Older models [Deprecated]
   | 'voyage-large-2-instruct'

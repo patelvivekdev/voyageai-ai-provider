@@ -7,7 +7,7 @@ export type VoyageRerankingModelId =
   | 'rerank-2.5'
   | 'rerank-2.5-lite'
   | 'rerank-2'
-  | 'rerank-lite-2'
+  | 'rerank-2-lite'
   | 'rerank-1'
   | 'rerank-lite-1'
   | (string & {});

@@ -1,5 +1,7 @@
-import { createVoyage, type ImageEmbeddingInput } from '../src';
 import { embed, embedMany } from 'ai';
+import { createVoyage } from '../src/voyage-provider';
+import type { VoyageMultimodalEmbeddingOptions } from '../src/voyage-multimodal-embedding-settings';
+
 const voyage = createVoyage({
   apiKey: process.env.VOYAGE_API_KEY,
 });
@@ -15,74 +17,82 @@ async function imageEmbeddingExamples() {
   console.log('🔀 Voyage AI Image Embedding Examples');
   const imageModel = voyage.imageEmbeddingModel('voyage-multimodal-3');
 
-  const embedding = await embed<ImageEmbeddingInput>({
+  // Image-only embeddings: pass an empty string per value and put the images
+  // in providerOptions.voyage.content (one entry per value, same order).
+  const embedding = await embed({
     model: imageModel,
-    value: await getBase64Image('https://i.ibb.co/r5w8hG8/beach2.jpg'),
+    value: '',
+    providerOptions: {
+      voyage: {
+        content: [
+          [
+            {
+              type: 'image_base64',
+              image_base64: await getBase64Image(
+                'https://i.ibb.co/r5w8hG8/beach2.jpg',
+              ),
+            },
+          ],
+        ],
+      } satisfies VoyageMultimodalEmbeddingOptions,
+    },
   });
   console.log(embedding);
 
-  console.log('✅ One image in one embedding');
-  const basicCombinations = await embedMany<ImageEmbeddingInput>({
+  console.log('✅ One image per embedding');
+  const basicCombinations = await embedMany({
     model: imageModel,
-    values: [
-      {
-        image: 'https://i.ibb.co/nQNGqL0/beach1.jpg',
-      },
-      {
-        image: await getBase64Image('https://i.ibb.co/r5w8hG8/beach2.jpg'),
-      },
-    ],
-
-    // or
-    // values: [
-    //   'https://i.ibb.co/nQNGqL0/beach1.jpg',
-    //   await getBase64Image('https://i.ibb.co/r5w8hG8/beach2.jpg'),
-    // ],
+    values: ['', ''],
+    providerOptions: {
+      voyage: {
+        content: [
+          [
+            {
+              type: 'image_url',
+              image_url: 'https://i.ibb.co/nQNGqL0/beach1.jpg',
+            },
+          ],
+          [
+            {
+              type: 'image_base64',
+              image_base64: await getBase64Image(
+                'https://i.ibb.co/r5w8hG8/beach2.jpg',
+              ),
+            },
+          ],
+        ],
+      } satisfies VoyageMultimodalEmbeddingOptions,
+    },
   });
-
   for (const [index, embedding] of basicCombinations.embeddings.entries()) {
-    console.log(`Embedding ${index + 1}:`);
-    console.log(embedding.length);
+    console.log(`Embedding ${index + 1}:`, embedding.length);
   }
 
   console.log('✅ Multiple images in one embedding');
-  const multiImage = await embedMany<ImageEmbeddingInput>({
+  const multiImage = await embedMany({
     model: imageModel,
-    values: [
-      {
-        image: [
-          'https://i.ibb.co/nQNGqL0/beach1.jpg',
-          await getBase64Image('https://i.ibb.co/r5w8hG8/beach2.jpg'),
+    values: [''],
+    providerOptions: {
+      voyage: {
+        content: [
+          [
+            {
+              type: 'image_url',
+              image_url: 'https://i.ibb.co/nQNGqL0/beach1.jpg',
+            },
+            {
+              type: 'image_base64',
+              image_base64: await getBase64Image(
+                'https://i.ibb.co/r5w8hG8/beach2.jpg',
+              ),
+            },
+          ],
         ],
-      },
-    ],
+      } satisfies VoyageMultimodalEmbeddingOptions,
+    },
   });
-
   for (const [index, embedding] of multiImage.embeddings.entries()) {
-    console.log(`Embedding ${index + 1}:`);
-    console.log(embedding.length);
-  }
-
-  console.log('✅ Multiple embeddings with multiple images');
-  const richMultimodal = await embedMany<ImageEmbeddingInput>({
-    model: imageModel,
-    values: [
-      {
-        image: [
-          'https://i.ibb.co/nQNGqL0/beach1.jpg',
-          await getBase64Image('https://i.ibb.co/r5w8hG8/beach2.jpg'),
-        ],
-      },
-      {
-        image: [
-          'https://i0.wp.com/blog.voyageai.com/wp-content/uploads/2024/11/Slide-1.png',
-        ],
-      },
-    ],
-  });
-  for (const [index, embedding] of richMultimodal.embeddings.entries()) {
-    console.log(`Embedding ${index + 1}:`);
-    console.log(embedding.length);
+    console.log(`Embedding ${index + 1}:`, embedding.length);
   }
 }
 
