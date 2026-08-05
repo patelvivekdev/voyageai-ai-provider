@@ -77,20 +77,26 @@ export const generateEmbeddings = async (
 The settings object should contain the settings you want to add to the model. You can find the available settings for the model in the Voyage API documentation: https://docs.voyageai.com/reference/embeddings-api
 
 ```typescript
+import { embedMany } from 'ai';
+import { createVoyage } from 'voyage-ai-provider';
+
 const voyage = createVoyage({
   apiKey: process.env.VOYAGE_API_KEY,
 });
 
-// Initialize the embedding model
-const embeddingModel = voyage.embeddingModel(
-  'voyage-3-lite',
-  // adding settings
-  {
-    inputType: 'document',
-    outputDimension: '1024', // the new model voyage-code-3, voyage-3-large has 4 different output dimensions: 256, 512, 1024 (default), 2048
-    outputDtype: 'float',
+const embeddingModel = voyage.embeddingModel('voyage-3-lite');
+
+const { embeddings } = await embedMany({
+  model: embeddingModel,
+  values: ['sunny day at the beach', 'rainy day in the city'],
+  providerOptions: {
+    voyage: {
+      inputType: 'document',
+      outputDimension: 1024,
+      outputDtype: 'float',
+    },
   },
-);
+});
 ```
 
 ### Image & Multi-modal Embedding
