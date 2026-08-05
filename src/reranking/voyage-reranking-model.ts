@@ -1,4 +1,4 @@
-import type { RerankingModelV3, SharedV3Warning } from '@ai-sdk/provider';
+import type { RerankingModelV4, SharedV4Warning } from '@ai-sdk/provider';
 import {
   combineHeaders,
   createJsonResponseHandler,
@@ -23,8 +23,8 @@ type VoyageRerankingConfig = {
   fetch?: FetchFunction;
 };
 
-export class VoyageRerankingModel implements RerankingModelV3 {
-  readonly specificationVersion = 'v3';
+export class VoyageRerankingModel implements RerankingModelV4 {
+  readonly specificationVersion = 'v4';
   readonly modelId: VoyageRerankingModelId;
 
   private readonly config: VoyageRerankingConfig;
@@ -46,8 +46,8 @@ export class VoyageRerankingModel implements RerankingModelV3 {
     topN,
     abortSignal,
     providerOptions,
-  }: Parameters<RerankingModelV3['doRerank']>[0]): Promise<
-    Awaited<ReturnType<RerankingModelV3['doRerank']>>
+  }: Parameters<RerankingModelV4['doRerank']>[0]): Promise<
+    Awaited<ReturnType<RerankingModelV4['doRerank']>>
   > {
     const rerankingOptions = await parseProviderOptions({
       provider: 'voyage',
@@ -55,7 +55,7 @@ export class VoyageRerankingModel implements RerankingModelV3 {
       schema: voyageRerankingOptionsSchema,
     });
 
-    const warnings: SharedV3Warning[] = [];
+    const warnings: SharedV4Warning[] = [];
 
     const {
       responseHeaders,

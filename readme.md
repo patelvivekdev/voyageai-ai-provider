@@ -12,6 +12,9 @@
 
 The Voyage AI Provider is a provider for the AI SDK. It provides a simple interface to the Voyage AI API.
 
+Version 5 targets AI SDK 7 and requires Node.js 22 or newer. It is distributed
+as an ESM-only package.
+
 ## Installation
 
 ```bash
@@ -48,7 +51,7 @@ VOYAGE_API_KEY=your-api-key
 import { voyage } from 'voyage-ai-provider';
 import { embedMany } from 'ai';
 
-const embeddingModel = voyage.textEmbeddingModel('voyage-3-lite');
+const embeddingModel = voyage.embeddingModel('voyage-3-lite');
 
 export const generateEmbeddings = async (
   value: string,
@@ -79,7 +82,7 @@ const voyage = createVoyage({
 });
 
 // Initialize the embedding model
-const embeddingModel = voyage.textEmbeddingModel(
+const embeddingModel = voyage.embeddingModel(
   'voyage-3-lite',
   // adding settings
   {
