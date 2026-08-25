@@ -1,9 +1,9 @@
 import type {
-  EmbeddingModelV3,
-  ImageModelV3,
-  LanguageModelV3,
-  ProviderV3,
-  RerankingModelV3,
+  EmbeddingModelV4,
+  ImageModelV4,
+  LanguageModelV4,
+  ProviderV4,
+  RerankingModelV4,
 } from '@ai-sdk/provider';
 import {
   type FetchFunction,
@@ -17,16 +17,16 @@ import { MultimodalEmbeddingModel } from './voyage-multimodal-embedding-model';
 import type { VoyageRerankingModelId } from './reranking/voyage-reranking-options';
 import { VoyageRerankingModel } from './reranking/voyage-reranking-model';
 
-export interface VoyageProvider extends ProviderV3 {
-  (modelId: VoyageEmbeddingModelId): EmbeddingModelV3;
+export interface VoyageProvider extends ProviderV4 {
+  (modelId: VoyageEmbeddingModelId): EmbeddingModelV4;
 
-  embeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
+  embeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV4;
 
   /**
    * @deprecated Use `embeddingModel` instead. `textEmbeddingModel` is kept for
    * backwards compatibility and points to the same implementation.
    */
-  textEmbeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV3;
+  textEmbeddingModel: (modelId: VoyageEmbeddingModelId) => EmbeddingModelV4;
 
   /**
    * Multimodal (text and/or image) embeddings.
@@ -37,7 +37,7 @@ export interface VoyageProvider extends ProviderV3 {
    */
   multimodalEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-  ) => EmbeddingModelV3;
+  ) => EmbeddingModelV4;
 
   /**
    * Alias for {@link VoyageProvider.multimodalEmbeddingModel} — both use the
@@ -45,11 +45,11 @@ export interface VoyageProvider extends ProviderV3 {
    */
   imageEmbeddingModel: (
     modelId: VoyageMultimodalEmbeddingModelId,
-  ) => EmbeddingModelV3;
+  ) => EmbeddingModelV4;
 
-  reranking: (modelId: VoyageRerankingModelId) => RerankingModelV3;
+  reranking: (modelId: VoyageRerankingModelId) => RerankingModelV4;
 
-  rerankingModel: (modelId: VoyageRerankingModelId) => RerankingModelV3;
+  rerankingModel: (modelId: VoyageRerankingModelId) => RerankingModelV4;
 }
 
 export interface VoyageProviderSettings {
@@ -137,18 +137,19 @@ export function createVoyage(
   provider.textEmbeddingModel = createEmbeddingModel;
   provider.multimodalEmbeddingModel = createMultimodalEmbeddingModel;
   provider.imageEmbeddingModel = createMultimodalEmbeddingModel;
+  provider.specificationVersion = 'v4' as const;
 
-  provider.chat = provider.languageModel = (): LanguageModelV3 => {
+  provider.chat = provider.languageModel = (): LanguageModelV4 => {
     throw new Error('languageModel method is not implemented.');
   };
-  provider.imageModel = (): ImageModelV3 => {
+  provider.imageModel = (): ImageModelV4 => {
     throw new Error('imageModel method is not implemented.');
   };
 
   provider.reranking = createRerankingModel;
   provider.rerankingModel = createRerankingModel;
 
-  return provider as unknown as VoyageProvider;
+  return provider as VoyageProvider;
 }
 
 /**

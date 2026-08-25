@@ -1,4 +1,4 @@
-import type { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
+import type { EmbeddingModelV4Embedding } from '@ai-sdk/provider';
 import { createTestServer } from '@ai-sdk/test-server/with-vitest';
 import { createVoyage } from './voyage-provider';
 
@@ -25,7 +25,7 @@ function prepareJsonResponse({
   },
   headers,
 }: {
-  embeddings?: EmbeddingModelV3Embedding[];
+  embeddings?: EmbeddingModelV4Embedding[];
   usage?: {
     text_tokens?: number;
     image_pixels?: number;

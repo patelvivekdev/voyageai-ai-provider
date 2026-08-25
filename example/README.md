@@ -65,7 +65,7 @@ import { embedMany } from 'ai';
 const voyage = createVoyage({ apiKey: process.env.VOYAGE_API_KEY });
 
 // Regular text embedding model
-const textModel = voyage.textEmbeddingModel('voyage-3');
+const textModel = voyage.embeddingModel('voyage-3');
 
 // Simple text embeddings
 await textModel.doEmbed({

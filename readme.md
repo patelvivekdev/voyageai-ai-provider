@@ -12,6 +12,9 @@
 
 The Voyage AI Provider is a provider for the AI SDK. It provides a simple interface to the Voyage AI API.
 
+Version 5 targets AI SDK 7 and requires Node.js 22 or newer. It is distributed
+as an ESM-only package.
+
 ## Installation
 
 ```bash
@@ -48,7 +51,7 @@ VOYAGE_API_KEY=your-api-key
 import { voyage } from 'voyage-ai-provider';
 import { embedMany } from 'ai';
 
-const embeddingModel = voyage.textEmbeddingModel('voyage-3-lite');
+const embeddingModel = voyage.embeddingModel('voyage-3-lite');
 
 export const generateEmbeddings = async (
   value: string,
@@ -74,20 +77,26 @@ export const generateEmbeddings = async (
 The settings object should contain the settings you want to add to the model. You can find the available settings for the model in the Voyage API documentation: https://docs.voyageai.com/reference/embeddings-api
 
 ```typescript
+import { embedMany } from 'ai';
+import { createVoyage } from 'voyage-ai-provider';
+
 const voyage = createVoyage({
   apiKey: process.env.VOYAGE_API_KEY,
 });
 
-// Initialize the embedding model
-const embeddingModel = voyage.textEmbeddingModel(
-  'voyage-3-lite',
-  // adding settings
-  {
-    inputType: 'document',
-    outputDimension: '1024', // the new model voyage-code-3, voyage-3-large has 4 different output dimensions: 256, 512, 1024 (default), 2048
-    outputDtype: 'float',
+const embeddingModel = voyage.embeddingModel('voyage-3-lite');
+
+const { embeddings } = await embedMany({
+  model: embeddingModel,
+  values: ['sunny day at the beach', 'rainy day in the city'],
+  providerOptions: {
+    voyage: {
+      inputType: 'document',
+      outputDimension: 1024,
+      outputDtype: 'float',
+    },
   },
-);
+});
 ```
 
 ### Image & Multi-modal Embedding

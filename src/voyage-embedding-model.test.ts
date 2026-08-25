@@ -1,5 +1,6 @@
-import type { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
+import type { EmbeddingModelV4Embedding, ProviderV4 } from '@ai-sdk/provider';
 import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { customProvider } from 'ai';
 import { createVoyage } from './voyage-provider';
 
 const dummyEmbeddings = [
@@ -12,9 +13,30 @@ const provider = createVoyage({
   baseURL: 'https://api.voyage.ai/v1',
   apiKey: 'test-api-key',
 });
+const providerV4: ProviderV4 = provider;
 const model = provider.textEmbeddingModel('voyage-3-lite');
 const server = createTestServer({
   'https://api.voyage.ai/v1/embeddings': {},
+});
+
+describe('provider', () => {
+  it('exposes the V4 specification at runtime', () => {
+    expect(providerV4.specificationVersion).toBe('v4');
+    expect(provider.embeddingModel('voyage-3-lite').specificationVersion).toBe(
+      'v4',
+    );
+    expect(provider.rerankingModel('rerank-2.5').specificationVersion).toBe(
+      'v4',
+    );
+  });
+
+  it('preserves reranking through an AI SDK v7 custom provider', () => {
+    const wrappedProvider = customProvider({ fallbackProvider: provider });
+
+    expect(
+      wrappedProvider.rerankingModel('rerank-2.5').specificationVersion,
+    ).toBe('v4');
+  });
 });
 
 describe('doEmbed', () => {
@@ -26,7 +48,7 @@ describe('doEmbed', () => {
     },
     headers,
   }: {
-    embeddings?: EmbeddingModelV3Embedding[];
+    embeddings?: EmbeddingModelV4Embedding[];
     usage?: { prompt_tokens: number; total_tokens: number };
     headers?: Record<string, string>;
   } = {}) {

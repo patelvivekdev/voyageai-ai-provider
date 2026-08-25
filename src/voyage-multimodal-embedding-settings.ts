@@ -1,9 +1,7 @@
 import { z } from 'zod/v4';
 
 export type VoyageMultimodalEmbeddingModelId =
-  | 'voyage-multimodal-3.5'
-  | 'voyage-multimodal-3'
-  | (string & {});
+  'voyage-multimodal-3.5' | 'voyage-multimodal-3' | (string & {});
 
 /**
  * A single multimodal content part, mirroring the Voyage multimodal
