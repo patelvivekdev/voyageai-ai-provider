@@ -1,5 +1,14 @@
 # voyage-ai-provider
 
+## 5.0.0
+
+### Major Changes
+
+- 8dc6411: Upgrade to AI SDK 7 and its V4 provider specification. The package now requires
+  Node.js 22 or newer and is distributed as ESM only. Provider objects and
+  embedding and reranking models now expose `specificationVersion: 'v4'`, making
+  Voyage compatible with AI SDK provider registries and `customProvider`.
+
 ## 4.0.0
 
 ### Major Changes
